@@ -26,6 +26,7 @@ public class BaseRepository<T> : IRepository<T>
     public async Task<OptionalResult<T>> Update(long id, T entity)
     {
         entity.Id = id;
+        entity.UpdatedAt = DateTime.UtcNow;
 
         _context.Set<T>().Update(entity);
         await _context.SaveChangesAsync();
@@ -38,18 +39,32 @@ public class BaseRepository<T> : IRepository<T>
         return await _context.Set<T>().FindAsync(id);
     }
 
-    public Task<OptionalResult<(List<T> data, long total)>> GetPage(PageFilter filter)
+    public async Task<OptionalResult<(List<T> data, long total)>> GetPage(
+        PageFilter filter)
     {
-        throw new NotImplementedException();
+        var query = _context.Set<T>().AsQueryable();
+
+        var total = await query.CountAsync();
+
+        var result = await query
+            .Skip(filter.Skip)
+            .Take(filter.Size)
+            .ToListAsync();
+
+        return (result, total);
     }
 
-    public Task HardDelete(long id)
+    public async Task HardDelete(T entity)
     {
-        throw new NotImplementedException();
+        _context.Set<T>().Remove(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public Task SoftDelete(long id)
+    public async Task SoftDelete(T entity)
     {
-        throw new NotImplementedException();
+        entity.IsEnabled = false;
+        entity.DeletedAt = DateTime.UtcNow;
+        _context.Set<T>().Update(entity);
+        await _context.SaveChangesAsync();
     }
 }

@@ -10,6 +10,6 @@ public interface IService<DTO, T>
     Task<Result<DTO>> Update(long id, DTO dto);
     Task<Result<DTO>> Get(long id);
     Task<Result<PageResult<DTO>>> GetPage(PageFilter filter);
-    Task SoftDelete(long id);
-    Task HardDelete(long id);
+    Task<Result<bool>> SoftDelete(long id);
+    Task<Result<bool>> HardDelete(long id);
 }

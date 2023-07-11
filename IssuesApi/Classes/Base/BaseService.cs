@@ -1,6 +1,8 @@
 using AutoMapper;
 using IssuesApi.Classes.Base.Interfaces;
+using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
+using LanguageExt;
 using LanguageExt.Common;
 
 namespace IssuesApi.Classes.Base;
@@ -52,13 +54,25 @@ public class BaseService<DTO, T> : IService<DTO, T>
         );
     }
 
-    public async Task HardDelete(long id)
+    public async Task<Result<bool>> HardDelete(long id)
     {
-        await _repository.HardDelete(id);
+        var option = await _repository.Get(id);
+        if (option.IsNone)
+            return new(new ResourceNotFoundException());
+        if (option.IsSome)
+            await _repository.HardDelete((T)option);
+
+        return new(true);
     }
 
-    public async Task SoftDelete(long id)
+    public async Task<Result<bool>> SoftDelete(long id)
     {
-        await _repository.SoftDelete(id);
+        var option = await _repository.Get(id);
+        if (option.IsNone)
+            return new(new ResourceNotFoundException());
+        if (option.IsSome)
+            await _repository.SoftDelete((T)option);
+
+        return new(true);
     }
 }

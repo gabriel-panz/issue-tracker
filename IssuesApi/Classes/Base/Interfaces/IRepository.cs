@@ -12,6 +12,6 @@ public interface IRepository<T>
     Task<Option<T>> Get(long id);
     ///<returns> A tuple with the list of results and total items count. </returns>
     Task<OptionalResult<(List<T> data, long total)>> GetPage(PageFilter filter);
-    Task SoftDelete(long id);
-    Task HardDelete(long id);
+    Task SoftDelete(T entity);
+    Task HardDelete(T entity);
 }
