@@ -6,13 +6,11 @@ public class IssuesDbContext : DbContext
 {
     public IssuesDbContext() : base()
     { 
-        if (!Database.EnsureCreated())
-            Database.Migrate();
+        Database.Migrate();
     }
     public IssuesDbContext(DbContextOptions options) : base(options)
     { 
-        if (Database.EnsureCreated())
-            Database.Migrate();
+        Database.Migrate();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

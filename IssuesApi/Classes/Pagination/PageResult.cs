@@ -43,6 +43,6 @@ public class PageResult<T>
 
         this.TotalItems = total;
     }
-    public static readonly PageResult<T> Empty = new(new(), 0, 0, 0);
+    public static readonly PageResult<T> Empty = new(new(), 1, 10, 0);
 
 }

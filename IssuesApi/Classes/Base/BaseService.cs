@@ -46,12 +46,11 @@ public abstract class BaseService<DTO, T> : IService<DTO, T>
         var result = await _repository.GetPage(filter);
 
         return result.Match<Result<PageResult<DTO>>>(
-            Some: (result) =>
+            Succ: (result) =>
         {
             var mappedData = _mapper.Map<List<DTO>>(result.data);
             return new PageResult<DTO>(mappedData, filter, result.total);
         },
-            None: () => PageResult<DTO>.Empty,
             Fail: exception => new(exception)
         );
     }

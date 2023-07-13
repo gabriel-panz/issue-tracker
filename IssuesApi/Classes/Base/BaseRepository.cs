@@ -55,7 +55,7 @@ public abstract class BaseRepository<T> : IRepository<T>
         return await _context.Set<T>().FindAsync(id);
     }
 
-    public async Task<OptionalResult<(List<T> data, long total)>> GetPage(
+    public async Task<Result<(List<T> data, long total)>> GetPage(
         PageFilter filter)
     {
         var query = _context.Set<T>().AsQueryable();
