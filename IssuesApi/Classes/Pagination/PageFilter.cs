@@ -16,6 +16,9 @@ public class PageFilter
         this.Index = index < 1
             ? 1
             : index;
+        this.Size = size < (byte)1
+            ? (byte)1
+            : size;
         this.Skip = (this.Index - 1) * Size;
     }
 }

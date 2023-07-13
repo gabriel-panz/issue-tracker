@@ -18,11 +18,15 @@ public class PageResult<T>
     /// <summary> Quantidade total de páginas. </summary>
     public int TotalPages
     {
-        get => Convert.ToInt32
-            (
-                Math.Ceiling(
-                    ((double)TotalItems / (double)this.PageSize))
-            );
+        get
+        {
+            if (TotalItems is 0) return 0;
+            return Convert.ToInt32
+                (
+                    Math.Ceiling(
+                        ((double)TotalItems / (double)this.PageSize))
+                );
+        }
     }
 
     public PageResult(List<T> data, int index, byte size, long total)
@@ -40,5 +44,5 @@ public class PageResult<T>
         this.TotalItems = total;
     }
     public static readonly PageResult<T> Empty = new(new(), 0, 0, 0);
-    
+
 }
