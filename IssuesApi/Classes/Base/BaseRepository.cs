@@ -7,29 +7,45 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IssuesApi.Classes.Base;
 
-public class BaseRepository<T> : IRepository<T>
+public abstract class BaseRepository<T> : IRepository<T>
     where T : class, IEntity
 {
-    private readonly IssuesDbContext _context;
+    protected readonly IssuesDbContext _context;
     public BaseRepository(IssuesDbContext context)
     {
         _context = context;
     }
 
-    public async Task<OptionalResult<T>> Create(T entity)
+    public async Task<Result<T>> Create(T entity)
     {
         await _context.Set<T>().AddAsync(entity);
-        await _context.SaveChangesAsync();
-        return entity;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        catch (System.Exception e)
+        {
+            return new(e);
+        }
     }
 
-    public async Task<OptionalResult<T>> Update(long id, T entity)
+    public async Task<Result<T>> Update(long id, T entity)
     {
         entity.Id = id;
         entity.UpdatedAt = DateTime.UtcNow;
 
         _context.Set<T>().Update(entity);
-        await _context.SaveChangesAsync();
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (System.Exception e)
+        {
+            return new(e);
+        }
 
         return entity;
     }

@@ -2,16 +2,15 @@ using AutoMapper;
 using IssuesApi.Classes.Base.Interfaces;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
-using LanguageExt;
 using LanguageExt.Common;
 
 namespace IssuesApi.Classes.Base;
 
-public class BaseService<DTO, T> : IService<DTO, T>
+public abstract class BaseService<DTO, T> : IService<DTO, T>
     where T : class, IEntity
 {
-    private readonly IRepository<T> _repository;
-    private readonly IMapper _mapper;
+    protected readonly IRepository<T> _repository;
+    protected readonly IMapper _mapper;
 
     public BaseService(IRepository<T> repository, IMapper mapper)
     {
@@ -23,7 +22,10 @@ public class BaseService<DTO, T> : IService<DTO, T>
     {
         var entity = _mapper.Map<T>(dto);
         var result = await _repository.Create(entity);
-        return _mapper.Map<DTO>(result);
+        return result.Match<Result<DTO>>(
+            Succ: s => _mapper.Map<DTO>(s),
+            Fail: e => new(e)
+        );
     }
 
     public async Task<Result<DTO>> Update(long id, DTO dto)
