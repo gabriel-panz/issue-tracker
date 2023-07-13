@@ -18,5 +18,9 @@ public class IssueItemMap : BaseMapping<IssueItem>
         builder.Property(x => x.Status)
             .IsRequired(true)
             .HasDefaultValue<IssueStatus>(IssueStatus.OPEN);
+
+        builder.HasOne(x => x.Project)
+            .WithMany(x => x.ProjectItems)
+            .HasForeignKey(x => x.ProjectId);
     }
 }

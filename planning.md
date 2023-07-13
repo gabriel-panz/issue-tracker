@@ -10,6 +10,8 @@
 I wanna learn some tools better, so I'm using this project for study
 
 - Docker
+- Kubernetes
+- HATEOAS
 
 ## Authentication
 

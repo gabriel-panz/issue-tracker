@@ -17,7 +17,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
         _service = service;
     }
 
-    [HttpGet("{id}", Name = "GetById")]
+    [HttpGet("{id}", Name = "[action][controller]")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var result = await _service.Get(id);
@@ -27,7 +27,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
         );
     }
 
-    [HttpGet(Name = "GetPage")]
+    [HttpGet(Name = "[action][controller]")]
     public async Task<IActionResult> GetPage(
         [Required][DefaultValue(1)] int index,
         [Required][DefaultValue(10)] byte size)
@@ -39,7 +39,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
         );
     }
 
-    [HttpPost(Name = "Create")]
+    [HttpPost(Name = "[action][controller]")]
     public async Task<IActionResult> Create([FromBody] DTO dto)
     {
         var result = await _service.Create(dto);
@@ -49,7 +49,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
         );
     }
 
-    [HttpPut("{id}", Name = "Update")]
+    [HttpPut("{id}", Name = "[action][controller]")]
     public async Task<IActionResult> Update(
         [FromRoute] long id,
         [FromBody] DTO dto)
@@ -61,7 +61,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
         );
     }
 
-    [HttpDelete("{id}", Name = "Delete")]
+    [HttpDelete("{id}", Name = "[action][controller]")]
     public async Task<IActionResult> Delete(
         [FromRoute] long id)
     {

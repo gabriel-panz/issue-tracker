@@ -15,13 +15,15 @@ builder.Services.AddDbContext<IssuesDbContext>(options =>
     options.UseSqlite("Data Source=testedb.sqlite");
 });
 
-builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
+builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile));
 
-builder.Services.AddAutoMapper(typeof(IssueItemProfile));
+builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
+builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
 builder.Services.AddScoped<IIssuesService, IssuesService>();
+builder.Services.AddScoped<IProjectsService, ProjectsService>();
 
-builder.Services.AddControllers().AddJsonOptions(options => 
+builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions
         .ReferenceHandler = ReferenceHandler.IgnoreCycles;

@@ -3,6 +3,7 @@ using System;
 using IssuesApi.Classes.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IssuesApi.Migrations
 {
     [DbContext(typeof(IssuesDbContext))]
-    partial class IssuesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230713225620_Project_IssueItem")]
+    partial class Project_IssueItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.8");
