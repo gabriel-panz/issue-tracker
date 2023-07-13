@@ -6,6 +6,11 @@
 - Notification
 - Discord Integration
 
+## Tool requirements
+I wanna learn some tools better, so I'm using this project for study
+
+- Docker
+
 ## Authentication
 
 Basic self made auth or third party, decopled enough to change if needed.

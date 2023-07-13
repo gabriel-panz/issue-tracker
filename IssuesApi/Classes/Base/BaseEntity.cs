@@ -5,7 +5,7 @@ namespace IssuesApi.Classes.Base;
 public class BaseEntity : IEntity
 {
     public long Id { get; set; }
-    public bool IsEnabled { get; set; }
+    public bool IsEnabled { get; set; } = true;
 
     public DateTime CreatedAt { get; } = DateTime.Now;
     public DateTime? UpdatedAt { get; set; }

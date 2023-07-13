@@ -21,6 +21,8 @@ public abstract class BaseMapping<T> : IEntityTypeConfiguration<T>
 
         builder.Property(x => x.DeletedAt)
             .IsRequired(false);
+
+        builder.HasQueryFilter(x => x.IsEnabled);
         
         ConfigureSpecific(builder);
     }

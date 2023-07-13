@@ -63,8 +63,7 @@ public abstract class BaseController<DTO, T> : ControllerBase
 
     [HttpDelete("{id}", Name = "Delete")]
     public async Task<IActionResult> Delete(
-        [FromRoute] long id,
-        [FromBody] DTO dto)
+        [FromRoute] long id)
     {
         var result = await _service.SoftDelete(id);
         return result.Match<IActionResult>(

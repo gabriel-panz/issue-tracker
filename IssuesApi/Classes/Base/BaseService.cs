@@ -32,13 +32,21 @@ public abstract class BaseService<DTO, T> : IService<DTO, T>
     {
         var entity = _mapper.Map<T>(dto);
         var result = await _repository.Update(id, entity);
-        return _mapper.Map<DTO>(result);
+
+        return result.Match<Result<DTO>>(
+            Succ: s => _mapper.Map<DTO>(s),
+            Fail: e => new(e)
+        );
     }
 
     public async Task<Result<DTO>> Get(long id)
     {
         var result = await _repository.Get(id);
-        return _mapper.Map<DTO>(result);
+
+        return result.Match<Result<DTO>>(
+            Some: s => _mapper.Map<DTO>(s),
+            None: () => new(new ResourceNotFoundException())
+        );
     }
 
     public async Task<Result<PageResult<DTO>>> GetPage(PageFilter filter)
@@ -58,6 +66,7 @@ public abstract class BaseService<DTO, T> : IService<DTO, T>
     public async Task<Result<bool>> HardDelete(long id)
     {
         var option = await _repository.Get(id);
+
         if (option.IsNone)
             return new(new ResourceNotFoundException());
         if (option.IsSome)
@@ -69,6 +78,7 @@ public abstract class BaseService<DTO, T> : IService<DTO, T>
     public async Task<Result<bool>> SoftDelete(long id)
     {
         var option = await _repository.Get(id);
+
         if (option.IsNone)
             return new(new ResourceNotFoundException());
         if (option.IsSome)
