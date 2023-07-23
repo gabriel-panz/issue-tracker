@@ -27,18 +27,6 @@ public abstract class BaseController<DTO, T> : ControllerBase
         );
     }
 
-    [HttpGet(Name = "[action][controller]")]
-    public async Task<IActionResult> GetPage(
-        [Required][DefaultValue(1)] int index,
-        [Required][DefaultValue(10)] byte size)
-    {
-        var result = await _service.GetPage(new PageFilter(index, size));
-        return result.Match<IActionResult>(
-            Succ: s => OkResult<PageResult<DTO>>(s),
-            Fail: e => BadResult(e)
-        );
-    }
-
     [HttpPost(Name = "[action][controller]")]
     public async Task<IActionResult> Create([FromBody] DTO dto)
     {
