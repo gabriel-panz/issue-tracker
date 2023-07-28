@@ -3,12 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 
 # copy csproj and restore as distinct layers
-COPY IssuesApi.csproj .
+COPY ./IssuesApi.csproj .
 RUN dotnet restore IssuesApi.csproj
 
 # copy everything else and build app
 COPY . .
-RUN dotnet publish IssuesApi.csproj -c release -o /publish
+RUN dotnet publish ./IssuesApi.csproj -c release -o /publish
 
 # final image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
