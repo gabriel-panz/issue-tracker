@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 as build
 WORKDIR /source
 COPY . .
 
-RUN dotnet restore
+CMD [ "dotnet", "restore" ]
 RUN dotnet publish -c release -o /app --no-restore
 
 # final image
