@@ -1,8 +1,10 @@
 using AutoMapper;
 using IssuesApi.Classes.Base;
+using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
+using IssuesApi.Domain.Inputs.Issues;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
@@ -30,5 +32,61 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>, IIssuesServic
         },
             Fail: exception => new(exception)
         );
+    }
+
+    public async Task<Result<IssueItemDTO>> Create(CreateIssueDTO dto)
+    {
+        var entity = _mapper.Map<IssueItem>(dto);
+        var result = await _repository.Create(entity);
+
+        return result.Match<Result<IssueItemDTO>>(
+            Succ: s => _mapper.Map<IssueItemDTO>(s),
+            Fail: e => new(e)
+        );
+    }
+
+    public async Task<Result<IssueItemDTO>> Update(long id, CreateIssueDTO dto)
+    {
+        var entity = _mapper.Map<IssueItem>(dto);
+        var result = await _repository.Update(id, entity);
+
+        return result.Match<Result<IssueItemDTO>>(
+            Succ: s => _mapper.Map<IssueItemDTO>(s),
+            Fail: e => new(e)
+        );
+    }
+
+    public async Task<Result<IssueItemDTO>> Get(long id)
+    {
+        var result = await _repository.Get(id);
+
+        return result.Match<Result<IssueItemDTO>>(
+            Some: s => _mapper.Map<IssueItemDTO>(s),
+            None: () => new(new ResourceNotFoundException())
+        );
+    }
+
+    public async Task<Result<bool>> HardDelete(long id)
+    {
+        var option = await _repository.Get(id);
+
+        if (option.IsNone)
+            return new(new ResourceNotFoundException());
+        if (option.IsSome)
+            await _repository.HardDelete((IssueItem)option);
+
+        return new(true);
+    }
+
+    public async Task<Result<bool>> SoftDelete(long id)
+    {
+        var option = await _repository.Get(id);
+
+        if (option.IsNone)
+            return new(new ResourceNotFoundException());
+        if (option.IsSome)
+            await _repository.SoftDelete((IssueItem)option);
+
+        return new(true);
     }
 }

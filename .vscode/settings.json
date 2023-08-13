@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
         "Succ"
-    ]
+    ],
+    "dotnet.defaultSolution": "IssuesApi/IssuesApi.sln"
 }
