@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IssuesApi.Classes.Base;
 
-public abstract class BaseMapping<T> : IEntityTypeConfiguration<T> 
+public abstract class BaseMapping<T> : IEntityTypeConfiguration<T>
     where T : class, IEntity
 {
     public void Configure(EntityTypeBuilder<T> builder)
@@ -15,7 +15,7 @@ public abstract class BaseMapping<T> : IEntityTypeConfiguration<T>
         builder.Property(x => x.CreatedAt)
             .IsRequired(true)
             .HasDefaultValue(DateTime.Now);
-        
+
         builder.Property(x => x.UpdatedAt)
             .IsRequired(false);
 
@@ -23,10 +23,10 @@ public abstract class BaseMapping<T> : IEntityTypeConfiguration<T>
             .IsRequired(false);
 
         builder.HasQueryFilter(x => x.IsEnabled);
-        
+
         ConfigureSpecific(builder);
     }
 
     public abstract void ConfigureSpecific(EntityTypeBuilder<T> builder);
-    
+
 }

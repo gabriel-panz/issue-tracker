@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using IssuesApi.Domain.Entities;
 
 namespace IssuesApi.Domain.DTOs;

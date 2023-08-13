@@ -19,9 +19,11 @@ builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile))
 
 builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+builder.Services.AddScoped<ITagsRepository, TagsRepository>();
 
 builder.Services.AddScoped<IIssuesService, IssuesService>();
 builder.Services.AddScoped<IProjectsService, ProjectsService>();
+builder.Services.AddScoped<ITagsService, TagsService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

@@ -10,6 +10,8 @@ public class IssueItem : BaseEntity
 
     public Project? Project { get; set; }
     public long ProjectId { get; set; }
+
+    public ICollection<IssueTag> IssueTags { get; set; } = null!;
 }
 
 public enum IssueStatus
