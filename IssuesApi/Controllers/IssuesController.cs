@@ -1,7 +1,4 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using IssuesApi.Classes.Base;
-using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters.Issues;
 using IssuesApi.Domain.Inputs.Issues;
@@ -46,6 +43,22 @@ public class IssuesController : BaseController
             Succ: s => OkResult(s),
             Fail: BadResult
         );
+    }
+
+    [HttpPut("addTags", Name = "[action][controller]")]
+    public async Task<IActionResult> AddTags([FromBody] UpdateTagsDTO dto)
+    {
+        await _service.AddTags(dto);
+
+        return NoContent();
+    }
+
+    [HttpPut("removeTags", Name = "[action][controller]")]
+    public async Task<IActionResult> RemoveTags([FromBody] UpdateTagsDTO dto)
+    {
+        await _service.RemoveTags(dto);
+
+        return NoContent();
     }
 
     [HttpPut("{id}", Name = "[action][controller]")]

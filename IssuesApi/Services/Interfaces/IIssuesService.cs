@@ -14,4 +14,6 @@ public interface IIssuesService //: IService<IssueItemDTO, IssueItem>
     Task<Result<bool>> SoftDelete(long id);
     Task<Result<bool>> HardDelete(long id);
     Task<Result<PageResult<IssueItemDTO>>> GetPage(IssuesPageFilter filter);
+    Task AddTags(UpdateTagsDTO dto);
+    Task RemoveTags(UpdateTagsDTO dto);
 }

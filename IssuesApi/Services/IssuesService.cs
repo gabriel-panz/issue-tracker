@@ -12,11 +12,14 @@ using LanguageExt.Common;
 
 namespace IssuesApi.Services;
 
-public class IssuesService : BaseService<IssueItemDTO, IssueItem>, IIssuesService
+public class IssuesService : BaseService<IssueItemDTO, IssueItem>
+    , IIssuesService
 {
     private new readonly IIssuesRepository _repository;
-    public IssuesService(IIssuesRepository repository, IMapper mapper)
-        : base(repository, mapper)
+    public IssuesService(
+        IIssuesRepository repository,
+        IMapper mapper)
+            : base(repository, mapper)
     {
         _repository = repository;
     }
@@ -89,5 +92,15 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>, IIssuesServic
             await _repository.SoftDelete((IssueItem)option);
 
         return new(true);
+    }
+
+    public async Task AddTags(UpdateTagsDTO dto)
+    {
+        await _repository.AddTags(dto);
+    }
+
+    public async Task RemoveTags(UpdateTagsDTO dto)
+    {
+        await _repository.RemoveTags(dto);
     }
 }
