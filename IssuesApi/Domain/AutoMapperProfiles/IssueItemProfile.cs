@@ -14,5 +14,8 @@ public class IssueItemProfile : Profile
 
         CreateMap<CreateIssueDTO, IssueItemDTO>()
             .ReverseMap();
+
+        CreateMap<CreateIssueDTO, IssueItem>()
+            .ReverseMap();
     }
 }

@@ -4,6 +4,7 @@ using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
+using IssuesApi.Domain.Filters.Issues;
 using IssuesApi.Domain.Inputs.Issues;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
@@ -20,9 +21,9 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>, IIssuesServic
         _repository = repository;
     }
 
-    public async Task<Result<PageResult<IssueItemDTO>>> GetPage(long projectId, PageFilter filter)
+    public async Task<Result<PageResult<IssueItemDTO>>> GetPage(IssuesPageFilter filter)
     {
-        var result = await _repository.GetPage(projectId, filter);
+        var result = await _repository.GetPage(filter);
 
         return result.Match<Result<PageResult<IssueItemDTO>>>(
             Succ: (result) =>

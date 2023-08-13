@@ -21,27 +21,23 @@ public class PageResult<T>
         get
         {
             if (TotalItems is 0) return 0;
-            return Convert.ToInt32
-                (
-                    Math.Ceiling(
-                        ((double)TotalItems / (double)this.PageSize))
-                );
+            return Convert.ToInt32(Math.Ceiling(TotalItems / (double)PageSize));
         }
     }
 
     public PageResult(List<T> data, int index, byte size, long total)
     {
-        this.Data = data;
-        this.Filter = new PageFilter(index, size);
+        Data = data;
+        Filter = new PageFilter(index, size);
 
-        this.TotalItems = total;
+        TotalItems = total;
     }
     public PageResult(List<T> data, PageFilter filter, long total)
     {
-        this.Data = data;
-        this.Filter = filter;
+        Data = data;
+        Filter = filter;
 
-        this.TotalItems = total;
+        TotalItems = total;
     }
     public static readonly PageResult<T> Empty = new(new(), 1, 10, 0);
 

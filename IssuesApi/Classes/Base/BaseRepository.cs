@@ -63,7 +63,7 @@ public abstract class BaseRepository<T> : IRepository<T>
         var total = await query.CountAsync();
 
         var result = await query
-            .Skip(filter.Skip)
+            .Skip(filter.Skip())
             .Take(filter.Size)
             .ToListAsync();
 

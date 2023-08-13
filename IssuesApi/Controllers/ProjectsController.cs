@@ -20,10 +20,9 @@ public class ProjectsController : BaseController
 
     [HttpGet(Name = "[action][controller]")]
     public async Task<IActionResult> GetPage(
-    [Required][DefaultValue(1)] int index,
-    [Required][DefaultValue(10)] byte size)
+    [FromQuery] PageFilter filter)
     {
-        var result = await _service.GetPage(new PageFilter(index, size));
+        var result = await _service.GetPage(filter);
         return result.Match(
             Succ: s => OkResult(s),
             Fail: BadResult

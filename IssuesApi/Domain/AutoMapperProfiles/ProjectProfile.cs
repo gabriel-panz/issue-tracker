@@ -14,5 +14,8 @@ public class ProjectProfile : Profile
 
         CreateMap<CreateProjectDTO, ProjectDTO>()
             .ReverseMap();
+
+        CreateMap<CreateProjectDTO, Project>()
+            .ReverseMap();
     }
 }

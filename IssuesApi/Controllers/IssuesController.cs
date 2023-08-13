@@ -2,8 +2,8 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
+using IssuesApi.Domain.Filters.Issues;
 using IssuesApi.Domain.Inputs.Issues;
 using IssuesApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -75,12 +75,10 @@ public class IssuesController : BaseController
 
     [HttpGet(Name = "[action][controller]")]
     public async Task<IActionResult> GetPage(
-        [Required] long projectId,
-        [Required][DefaultValue(1)] int index,
-        [Required][DefaultValue(10)] byte size)
+        [FromQuery] IssuesPageFilter filter)
     {
         var result = await _service
-            .GetPage(projectId, new PageFilter(index, size));
+            .GetPage(filter);
 
         return result.Match(
             Succ: s => OkResult(s),
