@@ -20,7 +20,7 @@ public class IssueItemMap : BaseMapping<IssueItem>
             .HasDefaultValue(IssueStatus.OPEN);
 
         builder.HasOne(x => x.Project)
-            .WithMany(x => x.ProjectItems)
+            .WithMany(x => x.Issues)
             .HasForeignKey(x => x.ProjectId);
     }
 }

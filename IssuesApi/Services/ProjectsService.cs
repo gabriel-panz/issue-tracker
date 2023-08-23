@@ -5,6 +5,7 @@ using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Inputs.Projects;
+using IssuesApi.Domain.Outputs.Projects;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
@@ -13,9 +14,11 @@ namespace IssuesApi.Services;
 
 public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsService
 {
+    private new readonly IProjectsRepository _repository;
     public ProjectsService(IProjectsRepository repository, IMapper mapper)
         : base(repository, mapper)
     {
+        _repository = repository;
     }
 
     public async Task<Result<ProjectDTO>> Create(CreateProjectDTO dto)
@@ -39,12 +42,22 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
         );
     }
 
-    public async Task<Result<ProjectDTO>> Get(long id)
+    public async Task<Result<ProjectOutputDTO>> Get(long id)
     {
         var result = await _repository.Get(id);
 
-        return result.Match<Result<ProjectDTO>>(
-            Some: s => _mapper.Map<ProjectDTO>(s),
+        return result.Match<Result<ProjectOutputDTO>>(
+            Some: s => _mapper.Map<ProjectOutputDTO>(s),
+            None: () => new(new ResourceNotFoundException())
+        );
+    }
+
+    public async Task<Result<ProjectOutputDTO>> Get2(long id)
+    {
+        var result = await _repository.Get2(id);
+
+        return result.Match<Result<ProjectOutputDTO>>(
+            Some: s => s,
             None: () => new(new ResourceNotFoundException())
         );
     }

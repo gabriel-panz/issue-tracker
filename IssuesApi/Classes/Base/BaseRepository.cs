@@ -50,7 +50,7 @@ public abstract class BaseRepository<T> : IRepository<T>
         return entity;
     }
 
-    public async Task<Option<T>> Get(long id)
+    public virtual async Task<Option<T>> Get(long id)
     {
         return await _context.Set<T>().FindAsync(id);
     }

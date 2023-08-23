@@ -59,7 +59,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         var total = await query.CountAsync();
 
         var result = await query
-            .Select(p => p.ProjectItems
+            .Select(p => p.Issues
                 .Skip(filter.Skip())
                 .Take(filter.Size)
                 .ToList())

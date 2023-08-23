@@ -45,7 +45,7 @@ public class IssuesController : BaseController
         );
     }
 
-    [HttpPut("addTags", Name = "[action][controller]")]
+    [HttpPatch("addTags", Name = "[action][controller]")]
     public async Task<IActionResult> AddTags([FromBody] UpdateTagsDTO dto)
     {
         await _service.AddTags(dto);
@@ -53,7 +53,7 @@ public class IssuesController : BaseController
         return NoContent();
     }
 
-    [HttpPut("removeTags", Name = "[action][controller]")]
+    [HttpPatch("removeTags", Name = "[action][controller]")]
     public async Task<IActionResult> RemoveTags([FromBody] UpdateTagsDTO dto)
     {
         await _service.RemoveTags(dto);

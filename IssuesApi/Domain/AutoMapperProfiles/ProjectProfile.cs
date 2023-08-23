@@ -2,6 +2,7 @@ using AutoMapper;
 using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Inputs.Projects;
+using IssuesApi.Domain.Outputs.Projects;
 
 namespace IssuesApi.Domain.AutoMapperProfiles;
 
@@ -11,6 +12,8 @@ public class ProjectProfile : Profile
     {
         CreateMap<Project, ProjectDTO>()
             .ReverseMap();
+        
+        CreateMap<Project, ProjectOutputDTO>();
 
         CreateMap<CreateProjectDTO, ProjectDTO>()
             .ReverseMap();
