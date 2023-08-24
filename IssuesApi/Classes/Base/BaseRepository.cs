@@ -50,11 +50,6 @@ public abstract class BaseRepository<T> : IRepository<T>
         return entity;
     }
 
-    public virtual async Task<Option<T>> Get(long id)
-    {
-        return await _context.Set<T>().FindAsync(id);
-    }
-
     public async Task<Result<(List<T> data, long total)>> GetPage(
         PageFilter filter)
     {
@@ -68,19 +63,5 @@ public abstract class BaseRepository<T> : IRepository<T>
             .ToListAsync();
 
         return (result, total);
-    }
-
-    public async Task HardDelete(T entity)
-    {
-        _context.Set<T>().Remove(entity);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task SoftDelete(T entity)
-    {
-        entity.IsEnabled = false;
-        entity.DeletedAt = DateTime.UtcNow;
-        _context.Set<T>().Update(entity);
-        await _context.SaveChangesAsync();
     }
 }

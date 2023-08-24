@@ -32,7 +32,7 @@ public class ProjectsController : BaseController
     [HttpGet("{id}", Name = "[action][controller]")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
-        var result = await _service.Get2(id);
+        var result = await _service.Get(id);
 
         return result.Match(
             Succ: s => OkResult(s),

@@ -9,9 +9,6 @@ public interface IRepository<T>
 {
     Task<Result<T>> Create(T entity);
     Task<Result<T>> Update(long id, T entity);
-    Task<Option<T>> Get(long id);
     ///<returns> A tuple with the list of results and total items count. </returns>
     Task<Result<(List<T> data, long total)>> GetPage(PageFilter filter);
-    Task SoftDelete(T entity);
-    Task HardDelete(T entity);
 }

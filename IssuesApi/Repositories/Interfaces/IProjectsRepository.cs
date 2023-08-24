@@ -6,6 +6,8 @@ using LanguageExt;
 namespace IssuesApi.Repositories.Interfaces;
 
 public interface IProjectsRepository : IRepository<Project>
-{ 
-    Task<Option<ProjectOutputDTO>> Get2(long id);
+{
+    Task<Option<ProjectOutputDTO>> Get(long id);
+    Task<bool> SoftDelete(long id);
+    Task<bool> HardDelete(long id);
 }

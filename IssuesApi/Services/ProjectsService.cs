@@ -47,16 +47,6 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
         var result = await _repository.Get(id);
 
         return result.Match<Result<ProjectOutputDTO>>(
-            Some: s => _mapper.Map<ProjectOutputDTO>(s),
-            None: () => new(new ResourceNotFoundException())
-        );
-    }
-
-    public async Task<Result<ProjectOutputDTO>> Get2(long id)
-    {
-        var result = await _repository.Get2(id);
-
-        return result.Match<Result<ProjectOutputDTO>>(
             Some: s => s,
             None: () => new(new ResourceNotFoundException())
         );
@@ -78,24 +68,14 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
 
     public async Task<Result<bool>> HardDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.HardDelete((Project)option);
+        await _repository.HardDelete(id);
 
         return new(true);
     }
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.SoftDelete((Project)option);
+        await _repository.SoftDelete(id);
 
         return new(true);
     }

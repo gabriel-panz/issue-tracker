@@ -14,18 +14,10 @@ public class ProjectsRepository : BaseRepository<Project>, IProjectsRepository
     {
     }
 
-    public async override Task<Option<Project>> Get(long id)
+    public async Task<Option<ProjectOutputDTO>> Get(long id)
     {
         return await _context.Set<Project>()
-            .IgnoreAutoIncludes()
-            .Include(p => p.Issues)
             .Where(p => p.Id == id)
-            .FirstOrDefaultAsync();
-    }
-
-    public async Task<Option<ProjectOutputDTO>> Get2(long id)
-    {
-        return await _context.Set<Project>()
             .Select(p => new ProjectOutputDTO()
             {
                 Id = p.Id,
@@ -34,5 +26,25 @@ public class ProjectsRepository : BaseRepository<Project>, IProjectsRepository
                 Issues = p.Issues
             })
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<bool> HardDelete(long id)
+    {
+        var result = await _context.Set<Project>()
+            .Where(x => x.Id == id)
+            .ExecuteDeleteAsync();
+
+        return result > 0;
+    }
+
+    public async Task<bool> SoftDelete(long id)
+    {
+        var result = await _context.Set<Project>()
+            .Where(x => x.Id == id)
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(p => p.IsEnabled, false)
+                .SetProperty(p => p.DeletedAt, DateTime.Now));
+
+        return result > 0;
     }
 }

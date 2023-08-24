@@ -13,9 +13,12 @@ namespace IssuesApi.Services;
 
 public class TagsService : BaseService<TagDTO, Tag>, ITagsService
 {
+    private new readonly ITagsRepository _repository;
+
     public TagsService(ITagsRepository repository, IMapper mapper)
         : base(repository, mapper)
     {
+        _repository = repository;
     }
 
     public async Task<Result<TagDTO>> Create(CreateTagDTO dto)
@@ -65,25 +68,11 @@ public class TagsService : BaseService<TagDTO, Tag>, ITagsService
 
     public async Task<Result<bool>> HardDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.HardDelete((Tag)option);
-
-        return new(true);
+        return await _repository.HardDelete(id);
     }
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.SoftDelete((Tag)option);
-
-        return new(true);
+        return await _repository.SoftDelete(id);
     }
 }

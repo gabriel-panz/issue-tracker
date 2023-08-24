@@ -72,26 +72,12 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>
 
     public async Task<Result<bool>> HardDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.HardDelete((IssueItem)option);
-
-        return new(true);
+        return await _repository.HardDelete(id);
     }
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        var option = await _repository.Get(id);
-
-        if (option.IsNone)
-            return new(new ResourceNotFoundException());
-        if (option.IsSome)
-            await _repository.SoftDelete((IssueItem)option);
-
-        return new(true);
+        return await _repository.SoftDelete(id);
     }
 
     public async Task AddTags(UpdateTagsDTO dto)
