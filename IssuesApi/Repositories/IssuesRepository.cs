@@ -1,7 +1,6 @@
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters.Issues;
 using IssuesApi.Domain.Inputs.Issues;
@@ -18,6 +17,39 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
     {
     }
 
+    public async Task<Result<IssueItem>> Create(IssueItem entity)
+    {
+        await _context.Set<IssueItem>().AddAsync(entity);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        catch (Exception e)
+        {
+            return new(e);
+        }
+    }
+
+    public async Task<Result<IssueItem>> Update(IssueItem entity)
+    {
+        entity.UpdatedAt = DateTime.UtcNow;
+
+        _context.Set<IssueItem>().Update(entity);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            return new(e);
+        }
+
+        return entity;
+    }
+
     public async Task<Option<IssueItem>> Get(long id)
     {
         return await _context.Set<IssueItem>()
@@ -27,7 +59,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
     public async Task<bool> HardDelete(long id)
     {
-        var result = await _context.Set<Project>()
+        var result = await _context.Set<IssueItem>()
             .Where(x => x.Id == id)
             .ExecuteDeleteAsync();
 
@@ -36,7 +68,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
     public async Task<bool> SoftDelete(long id)
     {
-        var result = await _context.Set<Project>()
+        var result = await _context.Set<IssueItem>()
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(x => x
                 .SetProperty(p => p.IsEnabled, false)
@@ -78,7 +110,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Result<(List<IssueItem> data, long total)>> GetPage(
+    public async Task<Result<FilteredList<IssueItem>>> GetPage(
         long projectId,
         PageFilter filter)
     {
@@ -94,10 +126,10 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
                 .ToList())
             .FirstAsync();
 
-        return (result, total);
+        return new FilteredList<IssueItem>(result, total);
     }
 
-    public async Task<Result<(List<IssueItem> data, long total)>> GetPage(
+    public async Task<Result<FilteredList<IssueItem>>> GetPage(
         IssuesPageFilter filter)
     {
         var query = _context.Set<IssueItem>()
@@ -114,7 +146,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
             .Take(filter.Size)
             .ToListAsync();
 
-        return (result, total);
+        return new FilteredList<IssueItem>(result, total);
     }
 
     public Task AddTags(long issueId, List<long> tagIds)

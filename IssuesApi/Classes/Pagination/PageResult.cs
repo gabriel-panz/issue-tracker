@@ -7,10 +7,10 @@ public class PageResult<T>
     private readonly PageFilter Filter;
 
     /// <summary> Índice da página. </summary>
-    public int PageIndex { get => this.Filter.Index; }
+    public int PageIndex { get => Filter.Index; }
 
     /// <summary> Quantidade de registros por página. </summary>
-    public int PageSize { get => this.Filter.Size; }
+    public int PageSize { get => Filter.Size; }
 
     /// <summary> Quantidade total de registros em todas as páginas. </summary>
     public long TotalItems { get; }

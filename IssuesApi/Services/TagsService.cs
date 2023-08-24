@@ -13,10 +13,10 @@ namespace IssuesApi.Services;
 
 public class TagsService : BaseService<TagDTO, Tag>, ITagsService
 {
-    private new readonly ITagsRepository _repository;
+    private readonly ITagsRepository _repository;
 
     public TagsService(ITagsRepository repository, IMapper mapper)
-        : base(repository, mapper)
+        : base(mapper)
     {
         _repository = repository;
     }
@@ -31,10 +31,10 @@ public class TagsService : BaseService<TagDTO, Tag>, ITagsService
         );
     }
 
-    public async Task<Result<TagDTO>> Update(long id, CreateTagDTO dto)
+    public async Task<Result<TagDTO>> Update(UpdateTagDTO dto)
     {
         var entity = _mapper.Map<Tag>(dto);
-        var result = await _repository.Update(id, entity);
+        var result = await _repository.Update(entity);
 
         return result.Match<Result<TagDTO>>(
             Succ: s => _mapper.Map<TagDTO>(s),
@@ -59,8 +59,8 @@ public class TagsService : BaseService<TagDTO, Tag>, ITagsService
         return result.Match<Result<PageResult<TagDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<TagDTO>>(result.data);
-            return new PageResult<TagDTO>(mappedData, filter, result.total);
+            var mappedData = _mapper.Map<List<TagDTO>>(result.Data);
+            return new PageResult<TagDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );

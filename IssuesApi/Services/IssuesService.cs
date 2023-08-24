@@ -15,11 +15,11 @@ namespace IssuesApi.Services;
 public class IssuesService : BaseService<IssueItemDTO, IssueItem>
     , IIssuesService
 {
-    private new readonly IIssuesRepository _repository;
+    private readonly IIssuesRepository _repository;
     public IssuesService(
         IIssuesRepository repository,
         IMapper mapper)
-            : base(repository, mapper)
+            : base(mapper)
     {
         _repository = repository;
     }
@@ -31,8 +31,8 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>
         return result.Match<Result<PageResult<IssueItemDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<IssueItemDTO>>(result.data);
-            return new PageResult<IssueItemDTO>(mappedData, filter, result.total);
+            var mappedData = _mapper.Map<List<IssueItemDTO>>(result.Data);
+            return new PageResult<IssueItemDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );
@@ -49,10 +49,10 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>
         );
     }
 
-    public async Task<Result<IssueItemDTO>> Update(long id, CreateIssueDTO dto)
+    public async Task<Result<IssueItemDTO>> Update(UpdateIssueDTO dto)
     {
         var entity = _mapper.Map<IssueItem>(dto);
-        var result = await _repository.Update(id, entity);
+        var result = await _repository.Update(entity);
 
         return result.Match<Result<IssueItemDTO>>(
             Succ: s => _mapper.Map<IssueItemDTO>(s),

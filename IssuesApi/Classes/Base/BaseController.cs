@@ -1,4 +1,3 @@
-using IssuesApi.Classes.Base.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssuesApi.Classes.Base;

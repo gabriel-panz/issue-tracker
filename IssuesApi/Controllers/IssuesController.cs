@@ -63,10 +63,9 @@ public class IssuesController : BaseController
 
     [HttpPut("{id}", Name = "[action][controller]")]
     public async Task<IActionResult> Update(
-        [FromRoute] long id,
-        [FromBody] CreateIssueDTO dto)
+        [FromBody] UpdateIssueDTO dto)
     {
-        var result = await _service.Update(id, dto);
+        var result = await _service.Update(dto);
 
         return result.Match(
             Succ: s => OkResult(s),

@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Inputs.Projects;
@@ -23,6 +21,7 @@ public class ProjectsController : BaseController
     [FromQuery] PageFilter filter)
     {
         var result = await _service.GetPage(filter);
+
         return result.Match(
             Succ: s => OkResult(s),
             Fail: BadResult
@@ -41,7 +40,8 @@ public class ProjectsController : BaseController
     }
 
     [HttpPost(Name = "[action][controller]")]
-    public async Task<IActionResult> Create([FromBody] CreateProjectDTO dto)
+    public async Task<IActionResult> Create(
+        [FromBody] CreateProjectDTO dto)
     {
         var result = await _service.Create(dto);
 
@@ -51,12 +51,11 @@ public class ProjectsController : BaseController
         );
     }
 
-    [HttpPut("{id}", Name = "[action][controller]")]
+    [HttpPut(Name = "[action][controller]")]
     public async Task<IActionResult> Update(
-        [FromRoute] long id,
-        [FromBody] CreateProjectDTO dto)
+        [FromBody] UpdateProjectDTO dto)
     {
-        var result = await _service.Update(id, dto);
+        var result = await _service.Update(dto);
 
         return result.Match(
             Succ: s => OkResult(s),

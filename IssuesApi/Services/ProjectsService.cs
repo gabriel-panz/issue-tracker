@@ -14,9 +14,9 @@ namespace IssuesApi.Services;
 
 public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsService
 {
-    private new readonly IProjectsRepository _repository;
+    private readonly IProjectsRepository _repository;
     public ProjectsService(IProjectsRepository repository, IMapper mapper)
-        : base(repository, mapper)
+        : base(mapper)
     {
         _repository = repository;
     }
@@ -25,16 +25,17 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
     {
         var entity = _mapper.Map<Project>(dto);
         var result = await _repository.Create(entity);
+
         return result.Match<Result<ProjectDTO>>(
             Succ: s => _mapper.Map<ProjectDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<ProjectDTO>> Update(long id, CreateProjectDTO dto)
+    public async Task<Result<ProjectDTO>> Update(UpdateProjectDTO dto)
     {
         var entity = _mapper.Map<Project>(dto);
-        var result = await _repository.Update(id, entity);
+        var result = await _repository.Update(entity);
 
         return result.Match<Result<ProjectDTO>>(
             Succ: s => _mapper.Map<ProjectDTO>(s),
@@ -59,8 +60,8 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
         return result.Match<Result<PageResult<ProjectDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<ProjectDTO>>(result.data);
-            return new PageResult<ProjectDTO>(mappedData, filter, result.total);
+            var mappedData = _mapper.Map<List<ProjectDTO>>(result.Data);
+            return new PageResult<ProjectDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );
@@ -68,15 +69,11 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
 
     public async Task<Result<bool>> HardDelete(long id)
     {
-        await _repository.HardDelete(id);
-
-        return new(true);
+        return await _repository.HardDelete(id);
     }
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        await _repository.SoftDelete(id);
-
-        return new(true);
+        return await _repository.SoftDelete(id);
     }
 }
