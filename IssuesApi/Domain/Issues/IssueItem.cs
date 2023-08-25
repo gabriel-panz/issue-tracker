@@ -13,10 +13,3 @@ public class IssueItem : BaseEntity
 
     public ICollection<IssueTag> IssueTags { get; set; } = null!;
 }
-
-public enum IssueStatus
-{
-    OPEN = 1,
-    IN_PROGRESS = 2,
-    CLOSED = 3
-}

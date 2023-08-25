@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace IssuesApi.Domain.Inputs.Tags;
+namespace IssuesApi.Domain.Inputs;
 
 public class CreateTagDTO
 {

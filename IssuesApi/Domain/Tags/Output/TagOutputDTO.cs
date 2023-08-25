@@ -1,4 +1,4 @@
-namespace IssuesApi.Domain.Outputs.Tags;
+namespace IssuesApi.Domain.Outputs;
 
 public class TagOutputDTO
 {

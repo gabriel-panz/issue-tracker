@@ -1,6 +1,6 @@
 using IssuesApi.Domain.Entities;
 
-namespace IssuesApi.Domain.Outputs.Projects;
+namespace IssuesApi.Domain.Outputs;
 
 public class ProjectOutputDTO
 {

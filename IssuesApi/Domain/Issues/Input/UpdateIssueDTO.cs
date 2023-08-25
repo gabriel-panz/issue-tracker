@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using IssuesApi.Domain.Entities;
 
-namespace IssuesApi.Domain.Inputs.Issues;
+namespace IssuesApi.Domain.Inputs;
 
 public class UpdateIssueDTO
 {

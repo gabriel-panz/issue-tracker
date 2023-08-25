@@ -1,4 +1,4 @@
-namespace IssuesApi.Domain.Inputs.Projects;
+namespace IssuesApi.Domain.Inputs;
 
 public class CreateProjectDTO
 {

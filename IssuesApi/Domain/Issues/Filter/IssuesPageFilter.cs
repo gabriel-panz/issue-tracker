@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 
-namespace IssuesApi.Domain.Filters.Issues;
+namespace IssuesApi.Domain.Filters;
 
 public class IssuesPageFilter : PageFilter
 {
