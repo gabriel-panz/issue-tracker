@@ -1,3 +1,4 @@
+using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
 using IssuesApi.Classes.Pagination;
@@ -11,7 +12,10 @@ namespace IssuesApi.Repositories;
 
 public class TagsRepository : BaseRepository<Tag>, ITagsRepository
 {
-    public TagsRepository(IssuesDbContext context) : base(context)
+    public TagsRepository(
+        IssuesDbContext context,
+        IMapper mapper) 
+            : base(context, mapper)
     {
     }
 

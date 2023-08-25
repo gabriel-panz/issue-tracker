@@ -1,6 +1,6 @@
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Outputs.Projects;
+using IssuesApi.Domain.Outputs;
 using LanguageExt;
 using LanguageExt.Common;
 

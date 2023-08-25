@@ -2,17 +2,17 @@ using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Filters.Issues;
-using IssuesApi.Domain.Inputs.Issues;
+using IssuesApi.Domain.Filters;
+using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
 
 namespace IssuesApi.Services;
 
-public class IssuesService : BaseService<IssueItemDTO, IssueItem>
+public class IssuesService : BaseService
     , IIssuesService
 {
     private readonly IIssuesRepository _repository;
@@ -24,48 +24,48 @@ public class IssuesService : BaseService<IssueItemDTO, IssueItem>
         _repository = repository;
     }
 
-    public async Task<Result<PageResult<IssueItemDTO>>> GetPage(IssuesPageFilter filter)
+    public async Task<Result<PageResult<IssueItemOutputDTO>>> GetPage(IssuesPageFilter filter)
     {
         var result = await _repository.GetPage(filter);
 
-        return result.Match<Result<PageResult<IssueItemDTO>>>(
+        return result.Match<Result<PageResult<IssueItemOutputDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<IssueItemDTO>>(result.Data);
-            return new PageResult<IssueItemDTO>(mappedData, filter, result.TotalCount);
+            var mappedData = _mapper.Map<List<IssueItemOutputDTO>>(result.Data);
+            return new PageResult<IssueItemOutputDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );
     }
 
-    public async Task<Result<IssueItemDTO>> Create(CreateIssueDTO dto)
+    public async Task<Result<IssueItemOutputDTO>> Create(CreateIssueDTO dto)
     {
         var entity = _mapper.Map<IssueItem>(dto);
         var result = await _repository.Create(entity);
 
-        return result.Match<Result<IssueItemDTO>>(
-            Succ: s => _mapper.Map<IssueItemDTO>(s),
+        return result.Match<Result<IssueItemOutputDTO>>(
+            Succ: s => _mapper.Map<IssueItemOutputDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<IssueItemDTO>> Update(UpdateIssueDTO dto)
+    public async Task<Result<IssueItemOutputDTO>> Update(UpdateIssueDTO dto)
     {
         var entity = _mapper.Map<IssueItem>(dto);
         var result = await _repository.Update(entity);
 
-        return result.Match<Result<IssueItemDTO>>(
-            Succ: s => _mapper.Map<IssueItemDTO>(s),
+        return result.Match<Result<IssueItemOutputDTO>>(
+            Succ: s => _mapper.Map<IssueItemOutputDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<IssueItemDTO>> Get(long id)
+    public async Task<Result<IssueItemOutputDTO>> Get(long id)
     {
         var result = await _repository.Get(id);
 
-        return result.Match<Result<IssueItemDTO>>(
-            Some: s => _mapper.Map<IssueItemDTO>(s),
+        return result.Match<Result<IssueItemOutputDTO>>(
+            Some: s => _mapper.Map<IssueItemOutputDTO>(s),
             None: () => new(new ResourceNotFoundException())
         );
     }

@@ -1,6 +1,6 @@
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.Inputs.Projects;
+using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

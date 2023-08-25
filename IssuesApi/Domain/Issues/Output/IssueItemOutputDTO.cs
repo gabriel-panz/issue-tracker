@@ -2,7 +2,7 @@ using IssuesApi.Domain.Entities;
 
 namespace IssuesApi.Domain.Outputs;
 
-public class IssueItemOutput
+public class IssueItemOutputDTO
 {
     public long Id { get; set; }
     public long ProjectId { get; set; }
@@ -10,5 +10,5 @@ public class IssueItemOutput
     public IssueStatus Status { get; set; }
     public string? Description { get; set; }
 
-    public List<Tag> Tags { get; set; } = new();
+    public List<TagOutputDTO> Tags { get; set; } = new();
 }

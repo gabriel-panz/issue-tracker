@@ -1,7 +1,7 @@
 using IssuesApi.Classes.Base;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Filters.Issues;
-using IssuesApi.Domain.Inputs.Issues;
+using IssuesApi.Domain.Filters;
+using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

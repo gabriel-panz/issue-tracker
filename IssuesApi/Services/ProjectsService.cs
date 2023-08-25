@@ -2,17 +2,16 @@ using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Inputs.Projects;
-using IssuesApi.Domain.Outputs.Projects;
+using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
 
 namespace IssuesApi.Services;
 
-public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsService
+public class ProjectsService : BaseService, IProjectsService
 {
     private readonly IProjectsRepository _repository;
     public ProjectsService(IProjectsRepository repository, IMapper mapper)
@@ -21,24 +20,24 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
         _repository = repository;
     }
 
-    public async Task<Result<ProjectDTO>> Create(CreateProjectDTO dto)
+    public async Task<Result<ProjectOutputDTO>> Create(CreateProjectDTO dto)
     {
         var entity = _mapper.Map<Project>(dto);
         var result = await _repository.Create(entity);
 
-        return result.Match<Result<ProjectDTO>>(
-            Succ: s => _mapper.Map<ProjectDTO>(s),
+        return result.Match<Result<ProjectOutputDTO>>(
+            Succ: s => _mapper.Map<ProjectOutputDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<ProjectDTO>> Update(UpdateProjectDTO dto)
+    public async Task<Result<ProjectOutputDTO>> Update(UpdateProjectDTO dto)
     {
         var entity = _mapper.Map<Project>(dto);
         var result = await _repository.Update(entity);
 
-        return result.Match<Result<ProjectDTO>>(
-            Succ: s => _mapper.Map<ProjectDTO>(s),
+        return result.Match<Result<ProjectOutputDTO>>(
+            Succ: s => _mapper.Map<ProjectOutputDTO>(s),
             Fail: e => new(e)
         );
     }
@@ -53,15 +52,15 @@ public class ProjectsService : BaseService<ProjectDTO, Project>, IProjectsServic
         );
     }
 
-    public async Task<Result<PageResult<ProjectDTO>>> GetPage(PageFilter filter)
+    public async Task<Result<PageResult<ProjectOutputDTO>>> GetPage(PageFilter filter)
     {
         var result = await _repository.GetPage(filter);
 
-        return result.Match<Result<PageResult<ProjectDTO>>>(
+        return result.Match<Result<PageResult<ProjectOutputDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<ProjectDTO>>(result.Data);
-            return new PageResult<ProjectDTO>(mappedData, filter, result.TotalCount);
+            var mappedData = _mapper.Map<List<ProjectOutputDTO>>(result.Data);
+            return new PageResult<ProjectOutputDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );

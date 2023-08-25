@@ -1,10 +1,7 @@
 using AutoMapper;
-using IssuesApi.Classes.Base.Interfaces;
-
 namespace IssuesApi.Classes.Base;
 
-public abstract class BaseService<DTO, T>
-    where T : class, IEntity
+public abstract class BaseService
 {
     protected readonly IMapper _mapper;
 

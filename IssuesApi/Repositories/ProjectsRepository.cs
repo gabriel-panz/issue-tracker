@@ -1,8 +1,9 @@
+using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Outputs.Projects;
+using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
@@ -13,7 +14,11 @@ namespace IssuesApi.Repositories;
 public class ProjectsRepository
     : BaseRepository<Project>, IProjectsRepository
 {
-    public ProjectsRepository(IssuesDbContext context) : base(context)
+    public ProjectsRepository(
+        IssuesDbContext context,
+        IMapper mapper
+    )
+        : base(context, mapper)
     {
     }
 
@@ -68,16 +73,15 @@ public class ProjectsRepository
 
     public async Task<Option<ProjectOutputDTO>> Get(long id)
     {
-        return await _context.Set<Project>()
+        var result = await _context.Set<Project>()
+            .Include(p => p.Issues)
+                .ThenInclude(p => p.IssueTags)
+                    .ThenInclude(p => p.Tag)
             .Where(p => p.Id == id)
-            .Select(p => new ProjectOutputDTO()
-            {
-                Id = p.Id,
-                Description = p.Description,
-                Title = p.Title,
-                Issues = p.Issues
-            })
+            .Select(x => _mapper.Map<ProjectOutputDTO>(x))
             .FirstOrDefaultAsync();
+
+        return result;
     }
 
     public async Task<bool> HardDelete(long id)

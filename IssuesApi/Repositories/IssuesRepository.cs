@@ -1,9 +1,11 @@
+using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Filters.Issues;
-using IssuesApi.Domain.Inputs.Issues;
+using IssuesApi.Domain.Filters;
+using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
@@ -13,7 +15,10 @@ namespace IssuesApi.Repositories;
 
 public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 {
-    public IssuesRepository(IssuesDbContext context) : base(context)
+    public IssuesRepository(
+        IssuesDbContext context,
+        IMapper mapper
+        ) : base(context, mapper)
     {
     }
 
@@ -50,11 +55,23 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         return entity;
     }
 
-    public async Task<Option<IssueItem>> Get(long id)
+    public async Task<Option<IssueItemOutputDTO>> Get(long id)
     {
         return await _context.Set<IssueItem>()
+            .Include(x => x.IssueTags)
+                .ThenInclude(x => x.Tag)
             .Where(x => x.Id == id)
-            .FirstOrDefaultAsync();
+            .Select(issue => new IssueItemOutputDTO
+            {
+                Id = issue.Id,
+                Description = issue.Description,
+                ProjectId = issue.ProjectId,
+                Title = issue.Title,
+                Status = issue.Status,
+                Tags = issue.IssueTags
+                    .Select(tag => _mapper.Map<TagOutputDTO>(tag.Tag))
+                    .ToList()
+            }).FirstOrDefaultAsync();
     }
 
     public async Task<bool> HardDelete(long id)
@@ -110,26 +127,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Result<FilteredList<IssueItem>>> GetPage(
-        long projectId,
-        PageFilter filter)
-    {
-        var query = _context.Set<Project>()
-            .Where(x => x.Id == projectId);
-
-        var total = await query.CountAsync();
-
-        var result = await query
-            .Select(p => p.Issues
-                .Skip(filter.Skip())
-                .Take(filter.Size)
-                .ToList())
-            .FirstAsync();
-
-        return new FilteredList<IssueItem>(result, total);
-    }
-
-    public async Task<Result<FilteredList<IssueItem>>> GetPage(
+    public async Task<Result<FilteredList<IssueItemOutputDTO>>> GetPage(
         IssuesPageFilter filter)
     {
         var query = _context.Set<IssueItem>()
@@ -144,9 +142,20 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         var result = await query
             .Skip(filter.Skip())
             .Take(filter.Size)
+            .Select(issue => new IssueItemOutputDTO
+            {
+                Id = issue.Id,
+                Description = issue.Description,
+                ProjectId = issue.ProjectId,
+                Title = issue.Title,
+                Status = issue.Status,
+                Tags = issue.IssueTags
+                    .Select(tag => _mapper.Map<TagOutputDTO>(tag.Tag))
+                    .ToList()
+            })
             .ToListAsync();
 
-        return new FilteredList<IssueItem>(result, total);
+        return new FilteredList<IssueItemOutputDTO>(result, total);
     }
 
     public Task AddTags(long issueId, List<long> tagIds)

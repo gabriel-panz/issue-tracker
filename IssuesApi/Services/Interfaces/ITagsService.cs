@@ -1,16 +1,16 @@
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
-using IssuesApi.Domain.Inputs.Tags;
+using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Outputs;
 using LanguageExt.Common;
 
 namespace IssuesApi.Services.Interfaces;
 
 public interface ITagsService
 {
-    Task<Result<TagDTO>> Create(CreateTagDTO dto);
-    Task<Result<TagDTO>> Update(UpdateTagDTO dto);
-    Task<Result<TagDTO>> Get(long id);
-    Task<Result<PageResult<TagDTO>>> GetPage(PageFilter filter);
+    Task<Result<TagOutputDTO>> Create(CreateTagDTO dto);
+    Task<Result<TagOutputDTO>> Update(UpdateTagDTO dto);
+    Task<Result<TagOutputDTO>> Get(long id);
+    Task<Result<PageResult<TagOutputDTO>>> GetPage(PageFilter filter);
     Task<Result<bool>> SoftDelete(long id);
     Task<Result<bool>> HardDelete(long id);
 }

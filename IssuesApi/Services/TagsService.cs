@@ -2,16 +2,17 @@ using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
-using IssuesApi.Domain.DTOs;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Inputs.Tags;
+using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
 
 namespace IssuesApi.Services;
 
-public class TagsService : BaseService<TagDTO, Tag>, ITagsService
+public class TagsService
+    : BaseService, ITagsService
 {
     private readonly ITagsRepository _repository;
 
@@ -21,46 +22,46 @@ public class TagsService : BaseService<TagDTO, Tag>, ITagsService
         _repository = repository;
     }
 
-    public async Task<Result<TagDTO>> Create(CreateTagDTO dto)
+    public async Task<Result<TagOutputDTO>> Create(CreateTagDTO dto)
     {
         var entity = _mapper.Map<Tag>(dto);
         var result = await _repository.Create(entity);
-        return result.Match<Result<TagDTO>>(
-            Succ: s => _mapper.Map<TagDTO>(s),
+        return result.Match<Result<TagOutputDTO>>(
+            Succ: s => _mapper.Map<TagOutputDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<TagDTO>> Update(UpdateTagDTO dto)
+    public async Task<Result<TagOutputDTO>> Update(UpdateTagDTO dto)
     {
         var entity = _mapper.Map<Tag>(dto);
         var result = await _repository.Update(entity);
 
-        return result.Match<Result<TagDTO>>(
-            Succ: s => _mapper.Map<TagDTO>(s),
+        return result.Match<Result<TagOutputDTO>>(
+            Succ: s => _mapper.Map<TagOutputDTO>(s),
             Fail: e => new(e)
         );
     }
 
-    public async Task<Result<TagDTO>> Get(long id)
+    public async Task<Result<TagOutputDTO>> Get(long id)
     {
         var result = await _repository.Get(id);
 
-        return result.Match<Result<TagDTO>>(
-            Some: s => _mapper.Map<TagDTO>(s),
+        return result.Match<Result<TagOutputDTO>>(
+            Some: s => _mapper.Map<TagOutputDTO>(s),
             None: () => new(new ResourceNotFoundException())
         );
     }
 
-    public async Task<Result<PageResult<TagDTO>>> GetPage(PageFilter filter)
+    public async Task<Result<PageResult<TagOutputDTO>>> GetPage(PageFilter filter)
     {
         var result = await _repository.GetPage(filter);
 
-        return result.Match<Result<PageResult<TagDTO>>>(
+        return result.Match<Result<PageResult<TagOutputDTO>>>(
             Succ: (result) =>
         {
-            var mappedData = _mapper.Map<List<TagDTO>>(result.Data);
-            return new PageResult<TagDTO>(mappedData, filter, result.TotalCount);
+            var mappedData = _mapper.Map<List<TagOutputDTO>>(result.Data);
+            return new PageResult<TagOutputDTO>(mappedData, filter, result.TotalCount);
         },
             Fail: exception => new(exception)
         );
