@@ -12,6 +12,6 @@ public interface IProjectsRepository
     Task<Result<Project>> Update(Project entity);
     Task<Option<ProjectOutputDTO>> Get(long id);
     Task<Result<FilteredList<Project>>> GetPage(PageFilter filter);
-    Task<bool> SoftDelete(long id);
-    Task<bool> HardDelete(long id);
+    Task<Result<bool>> SoftDelete(long id);
+    Task<Result<bool>> HardDelete(long id);
 }
