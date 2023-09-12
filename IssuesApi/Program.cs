@@ -6,6 +6,7 @@ using IssuesApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using IssuesApi.Domain.AutoMapperProfiles;
 using System.Text.Json.Serialization;
+using IssuesApi.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,14 +18,15 @@ builder.Services.AddDbContext<IssuesDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile));
 
-builder.Services.AddScoped<IIssueTagsRepository, IssueTagsRepository>();
-builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
-builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
-builder.Services.AddScoped<ITagsRepository, TagsRepository>();
+builder.Services.ConfigureDependencyInjection();
+// builder.Services.AddScoped<IIssueTagsRepository, IssueTagsRepository>();
+// builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
+// builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+// builder.Services.AddScoped<ITagsRepository, TagsRepository>();
 
-builder.Services.AddScoped<IIssuesService, IssuesService>();
-builder.Services.AddScoped<IProjectsService, ProjectsService>();
-builder.Services.AddScoped<ITagsService, TagsService>();
+// builder.Services.AddScoped<IIssuesService, IssuesService>();
+// builder.Services.AddScoped<IProjectsService, ProjectsService>();
+// builder.Services.AddScoped<ITagsService, TagsService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

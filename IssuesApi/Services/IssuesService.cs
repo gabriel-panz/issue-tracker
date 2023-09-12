@@ -3,7 +3,6 @@ using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
-using IssuesApi.Domain.Filter;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Domain.Outputs;

@@ -1,3 +1,4 @@
+using IssuesApi.Classes.Base.Interfaces;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Domain.Outputs;
@@ -5,7 +6,7 @@ using LanguageExt.Common;
 
 namespace IssuesApi.Services.Interfaces;
 
-public interface IProjectsService
+public interface IProjectsService : IService
 {
     Task<Result<ProjectOutputDTO>> Create(CreateProjectDTO dto);
     Task<Result<ProjectOutputDTO>> Update(UpdateProjectDTO dto);

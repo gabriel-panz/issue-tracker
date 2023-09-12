@@ -1,3 +1,4 @@
+using IssuesApi.Classes.Base.Interfaces;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Domain.Inputs;
@@ -6,7 +7,7 @@ using LanguageExt.Common;
 
 namespace IssuesApi.Services.Interfaces;
 
-public interface IIssuesService
+public interface IIssuesService : IService
 {
     Task<Result<IssueItemOutputDTO>> Create(CreateIssueDTO dto);
     Task<Result<IssueItemOutputDTO>> Update(UpdateIssueDTO dto);
