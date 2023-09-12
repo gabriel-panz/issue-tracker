@@ -57,11 +57,8 @@ public class ProjectsService : BaseService, IProjectsService
         var result = await _repository.GetPage(filter);
 
         return result.Match<Result<PageResult<ProjectOutputDTO>>>(
-            Succ: (result) =>
-        {
-            var mappedData = _mapper.Map<List<ProjectOutputDTO>>(result.Data);
-            return new PageResult<ProjectOutputDTO>(mappedData, filter, result.TotalCount);
-        },
+            Succ: (result) => new PageResult<ProjectOutputDTO>(
+                result.Data, filter, result.TotalCount),
             Fail: exception => new(exception)
         );
     }

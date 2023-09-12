@@ -55,7 +55,7 @@ public class ProjectsRepository
         return entity;
     }
 
-    public async Task<Result<FilteredList<Project>>> GetPage(
+    public async Task<Result<FilteredList<ProjectOutputDTO>>> GetPage(
         PageFilter filter)
     {
         var query = _context.Set<Project>()
@@ -66,9 +66,18 @@ public class ProjectsRepository
         var result = await query
             .Skip(filter.Skip())
             .Take(filter.Size)
+            .Select(x => new ProjectOutputDTO()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                OpenIssues = x.Issues.Count(x => x.Status == IssueStatus.OPEN),
+                ActiveIssues = x.Issues.Count(x => x.Status == IssueStatus.IN_PROGRESS),
+                ClosedIssues = x.Issues.Count(x => x.Status == IssueStatus.CLOSED)
+            })
             .ToListAsync();
 
-        return new FilteredList<Project>(result, total);
+        return new FilteredList<ProjectOutputDTO>(result, total);
     }
 
     public async Task<Option<ProjectOutputDTO>> Get(long id)
@@ -78,7 +87,15 @@ public class ProjectsRepository
                 .ThenInclude(p => p.IssueTags)
                     .ThenInclude(p => p.Tag)
             .Where(p => p.Id == id)
-            .Select(x => _mapper.Map<ProjectOutputDTO>(x))
+            .Select(x => new ProjectOutputDTO()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                Description = x.Description,
+                OpenIssues = x.Issues.Count(x => x.Status == IssueStatus.OPEN),
+                ActiveIssues = x.Issues.Count(x => x.Status == IssueStatus.IN_PROGRESS),
+                ClosedIssues = x.Issues.Count(x => x.Status == IssueStatus.CLOSED)
+            })
             .FirstOrDefaultAsync();
 
         return result;
