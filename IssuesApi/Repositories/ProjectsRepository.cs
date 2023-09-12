@@ -5,6 +5,7 @@ using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Outputs;
+using IssuesApi.Domain.Filter;
 using IssuesApi.Repositories.Interfaces;
 using LanguageExt;
 using LanguageExt.Common;
@@ -56,10 +57,23 @@ public class ProjectsRepository
     }
 
     public async Task<Result<FilteredList<ProjectOutputDTO>>> GetPage(
-        PageFilter filter)
+        ProjectFilter filter)
     {
         var query = _context.Set<Project>()
             .AsQueryable();
+
+        if (filter.Description is not null)
+        {
+            query = query.Where(x
+                => x.Description != null
+                && x.Description.ToLower().Contains(filter.Description.ToLower()));
+        }
+
+        if (filter.Title is not null)
+        {
+            query = query.Where(x
+                => x.Title.ToLower().Contains(filter.Title.ToLower()));
+        }
 
         var total = await query.CountAsync();
 

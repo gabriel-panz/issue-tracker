@@ -5,6 +5,7 @@ using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Domain.Outputs;
+using IssuesApi.Domain.Filter;
 using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using LanguageExt.Common;
@@ -52,7 +53,7 @@ public class ProjectsService : BaseService, IProjectsService
         );
     }
 
-    public async Task<Result<PageResult<ProjectOutputDTO>>> GetPage(PageFilter filter)
+    public async Task<Result<PageResult<ProjectOutputDTO>>> GetPage(ProjectFilter filter)
     {
         var result = await _repository.GetPage(filter);
 

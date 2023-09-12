@@ -1,6 +1,6 @@
 using IssuesApi.Classes.Base;
-using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Inputs;
+using IssuesApi.Domain.Filter;
 using IssuesApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +18,7 @@ public class ProjectsController : BaseController
 
     [HttpGet(Name = "[action][controller]")]
     public async Task<IActionResult> GetPage(
-    [FromQuery] PageFilter filter)
+    [FromQuery] ProjectFilter filter)
     {
         var result = await _service.GetPage(filter);
 
