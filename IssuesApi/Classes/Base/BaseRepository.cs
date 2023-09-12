@@ -5,7 +5,7 @@ using IssuesApi.Classes.Context;
 namespace IssuesApi.Classes.Base;
 
 public abstract class BaseRepository<T> : IRepository<T>
-    where T : class, IEntity
+    where T : class
 {
     protected readonly IssuesDbContext _context;
     protected readonly IMapper _mapper;

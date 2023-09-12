@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
@@ -14,7 +15,7 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
 {
     public TagsRepository(
         IssuesDbContext context,
-        IMapper mapper) 
+        IMapper mapper)
             : base(context, mapper)
     {
     }
@@ -63,6 +64,16 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
             .ExecuteDeleteAsync();
 
         return result > 0;
+    }
+
+    public async Task<List<Tag>> List(params Expression<Func<Tag, bool>>[] predicates)
+    {
+        var query = _context.Set<Tag>().AsQueryable();
+        foreach (var predicate in predicates)
+        {
+            query.Where(predicate);
+        }
+        return await query.ToListAsync();
     }
 
     public async Task<bool> SoftDelete(long id)

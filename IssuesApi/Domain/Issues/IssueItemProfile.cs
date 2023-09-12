@@ -10,5 +10,7 @@ public class IssueItemProfile : Profile
     public IssueItemProfile()
     {
         CreateMap<IssueItem, IssueItemOutputDTO>().ReverseMap();
+        CreateMap<CreateIssueDTO, IssueItem>();
+        CreateMap<UpdateIssueDTO, IssueItem>();
     }
 }

@@ -4,7 +4,6 @@ using IssuesApi.Classes.Context;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters;
-using IssuesApi.Domain.Inputs;
 using IssuesApi.Domain.Outputs;
 using IssuesApi.Repositories.Interfaces;
 using LanguageExt;
@@ -39,12 +38,29 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
     public async Task<Result<IssueItem>> Update(IssueItem entity)
     {
-        entity.UpdatedAt = DateTime.UtcNow;
-
-        _context.Set<IssueItem>().Update(entity);
-
         try
         {
+            entity.UpdatedAt = DateTime.UtcNow;
+
+            var tags = await _context.Set<IssueTag>()
+                .AsNoTracking()
+                .Where(x => x.IssueId == entity.Id)
+                .ToListAsync();
+
+            var tagIds = tags.Select(x => x.TagId);
+            var newTagIds = entity.IssueTags.Select(x => x.TagId);
+
+            var addTags = entity.IssueTags
+                .Where(x => !tagIds.Contains(x.TagId))
+                .ToList();
+
+            var removeTags = tags.Where(x => !newTagIds.Contains(x.TagId));
+
+            entity.IssueTags = addTags;
+
+            _context.Set<IssueTag>().RemoveRange(removeTags);
+
+            _context.Set<IssueItem>().Update(entity);
             await _context.SaveChangesAsync();
         }
         catch (Exception e)
@@ -94,39 +110,6 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         return result > 0;
     }
 
-    public async Task AddTags(UpdateTagsDTO dto)
-    {
-        var issueTags = new List<IssueTag>();
-        foreach (var id in dto.TagIds)
-        {
-            issueTags.Add(
-                new()
-                {
-                    IssueId = dto.IssueId,
-                    TagId = id
-                }
-            );
-        }
-
-        await _context.Set<IssueTag>()
-            .AddRangeAsync(issueTags);
-
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveTags(UpdateTagsDTO dto)
-    {
-        var issueTags = await _context.Set<IssueTag>()
-            .Where(x => x.IssueId == dto.IssueId)
-            .Where(x => dto.TagIds.Contains(x.TagId))
-            .ToListAsync();
-
-        _context.Set<IssueTag>()
-            .RemoveRange(issueTags);
-
-        await _context.SaveChangesAsync();
-    }
-
     public async Task<Result<FilteredList<IssueItemOutputDTO>>> GetPage(
         IssuesPageFilter filter)
     {
@@ -156,14 +139,5 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
             .ToListAsync();
 
         return new FilteredList<IssueItemOutputDTO>(result, total);
-    }
-
-    public Task AddTags(long issueId, List<long> tagIds)
-    {
-        return AddTags(new UpdateTagsDTO()
-        {
-            IssueId = issueId,
-            TagIds = tagIds
-        });
     }
 }

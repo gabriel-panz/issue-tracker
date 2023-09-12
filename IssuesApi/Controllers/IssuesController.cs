@@ -1,5 +1,4 @@
 using IssuesApi.Classes.Base;
-using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
@@ -13,15 +12,6 @@ public class IssuesController : BaseController
     public IssuesController(IIssuesService service) : base()
     {
         _service = service;
-    }
-
-    [HttpGet("statuses")]
-    public IActionResult GetIssueStatusList()
-    {
-        var list = Enum.GetValues<IssueStatus>()
-            .ToList();
-
-        return OkResult(list);
     }
 
     [HttpGet("{id}", Name = "[action][controller]")]
@@ -45,23 +35,7 @@ public class IssuesController : BaseController
         );
     }
 
-    [HttpPatch("addTags", Name = "[action][controller]")]
-    public async Task<IActionResult> AddTags([FromBody] UpdateTagsDTO dto)
-    {
-        await _service.AddTags(dto);
-
-        return NoContent();
-    }
-
-    [HttpPatch("removeTags", Name = "[action][controller]")]
-    public async Task<IActionResult> RemoveTags([FromBody] UpdateTagsDTO dto)
-    {
-        await _service.RemoveTags(dto);
-
-        return NoContent();
-    }
-
-    [HttpPut("{id}", Name = "[action][controller]")]
+    [HttpPut(Name = "[action][controller]")]
     public async Task<IActionResult> Update(
         [FromBody] UpdateIssueDTO dto)
     {

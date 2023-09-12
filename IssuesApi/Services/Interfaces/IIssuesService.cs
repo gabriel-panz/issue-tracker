@@ -6,7 +6,7 @@ using LanguageExt.Common;
 
 namespace IssuesApi.Services.Interfaces;
 
-public interface IIssuesService //: IService<IssueItemOutput, IssueItem>
+public interface IIssuesService
 {
     Task<Result<IssueItemOutputDTO>> Create(CreateIssueDTO dto);
     Task<Result<IssueItemOutputDTO>> Update(UpdateIssueDTO dto);
@@ -14,6 +14,4 @@ public interface IIssuesService //: IService<IssueItemOutput, IssueItem>
     Task<Result<bool>> SoftDelete(long id);
     Task<Result<bool>> HardDelete(long id);
     Task<Result<PageResult<IssueItemOutputDTO>>> GetPage(IssuesPageFilter filter);
-    Task AddTags(UpdateTagsDTO dto);
-    Task RemoveTags(UpdateTagsDTO dto);
 }

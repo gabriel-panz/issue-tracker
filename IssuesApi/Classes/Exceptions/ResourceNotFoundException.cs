@@ -15,4 +15,11 @@ public class ResourceNotFoundException : Exception
     protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
+
+    public static ResourceNotFoundException Create(string entity, string query)
+    {
+        var message = $"Entity {entity} with query {query} not found";
+        return new ResourceNotFoundException(message);
+
+    }
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using IssuesApi.Domain.Entities;
+using IssuesApi.Domain.Outputs;
 
 namespace IssuesApi.Domain.Inputs;
 

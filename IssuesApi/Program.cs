@@ -17,6 +17,7 @@ builder.Services.AddDbContext<IssuesDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile));
 
+builder.Services.AddScoped<IIssueTagsRepository, IssueTagsRepository>();
 builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 builder.Services.AddScoped<ITagsRepository, TagsRepository>();
