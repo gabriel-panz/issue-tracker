@@ -6,5 +6,5 @@ public class ResponseViewModel<T>
 {
     public string Message { get; set; } = "";
     public bool Success { get; set; }
-    public Option<T> Data { get; set; }
+    public T? Data { get; set; }
 }

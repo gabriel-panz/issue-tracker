@@ -2,8 +2,6 @@ namespace IssuesApi.Classes.Pagination;
 
 public class PageResult<T>
 {
-    /// <summary> Registros contidos na página. </summary>
-    public List<T> Data { get; }
     private readonly PageFilter Filter;
 
     /// <summary> Índice da página. </summary>
@@ -24,6 +22,9 @@ public class PageResult<T>
             return Convert.ToInt32(Math.Ceiling(TotalItems / (double)PageSize));
         }
     }
+
+    /// <summary> Registros contidos na página. </summary>
+    public List<T> Data { get; }
 
     public PageResult(List<T> data, int index, byte size, long total)
     {
