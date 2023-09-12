@@ -1,6 +1,3 @@
-using IssuesApi.Classes.Base;
-using IssuesApi.Classes.Base.Interfaces;
-
 namespace IssuesApi.Utils;
 
 public static class ProgramConfigurationUtil
@@ -10,30 +7,26 @@ public static class ProgramConfigurationUtil
         var allInterfaces = AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(t => t.GetTypes())
-            .Where(t => t.IsInterface &&
+            .Where(t => t.IsInterface && t.FullName is not null &&
                 (t.FullName.StartsWith("IssuesApi.Services.Interfaces")
-                    || t.FullName.StartsWith("IssuesApi.Repositories.Interfaces"))
-                && !t.FullName.Contains("ServiceBase")
-                && !t.FullName.Contains("RepositoryBase"));
+                    || t.FullName.StartsWith("IssuesApi.Repositories.Interfaces")));
 
-        var allClass = AppDomain.CurrentDomain
+        var allClasses = AppDomain.CurrentDomain
             .GetAssemblies()
             .SelectMany(t => t.GetTypes())
-            .Where(t => t.IsClass
-            && (t.FullName.StartsWith("IssuesApi.Services")
-                || t.FullName.StartsWith("IssuesApi.Repositories"))
-            && !t.FullName.Contains("ServiceBase")
-            && !t.FullName.Contains("RepositoryBase"));
+            .Where(t => t.IsClass && t.FullName is not null &&
+            (t.FullName.StartsWith("IssuesApi.Services")
+                || t.FullName.StartsWith("IssuesApi.Repositories")));
 
-        foreach (var intfc in allInterfaces)
+        foreach (var @interface in allInterfaces)
         {
-            var impl = allClass
+            var classImplementation = allClasses
                 .FirstOrDefault(c => c
                     .GetInterfaces()
-                    .Any(x => x.Name == intfc.Name));
+                    .Any(x => x.Name == @interface.Name));
 
-            if (impl != null)
-                services.AddScoped(intfc, impl);
+            if (classImplementation != null)
+                services.AddScoped(@interface, classImplementation);
         }
     }
 }
