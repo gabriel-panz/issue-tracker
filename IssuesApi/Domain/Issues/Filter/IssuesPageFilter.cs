@@ -8,5 +8,6 @@ public class IssuesPageFilter : PageFilter
 {
     [Required]
     public long ProjectId { get; set; }
+    public List<long> TagIds { get; set; } = new();
     public List<IssueStatus> Status { get; set; } = new();
 }

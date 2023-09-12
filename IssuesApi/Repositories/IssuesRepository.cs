@@ -120,6 +120,23 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
             query = query.Where(x =>
                 filter.Status.Contains(x.Status));
 
+        if (filter.TagIds.Any())
+        {
+            query = query
+                .Include(x => x.IssueTags);
+
+            // Exclusive search
+            foreach (var id in filter.TagIds)
+                query = query
+                    .Where(x => x.IssueTags.Any(y => y.TagId == id));
+
+            // Inclusive search
+            // query = query
+            //     .Include(x => x.IssueTags)
+            //     .Where(x => x.IssueTags
+            //         .Any(y => filter.TagIds.Contains(y.TagId)));
+        }
+
         var total = await query.CountAsync();
 
         var result = await query
