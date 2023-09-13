@@ -8,6 +8,9 @@ public class UserMapping : BaseMapping<User>
 {
     public override void ConfigureSpecific(EntityTypeBuilder<User> builder)
     {
+        builder.HasIndex(x => x.Login)
+            .IsUnique();
+
         builder.Property(x => x.Nickname)
             .HasMaxLength(63)
             .IsRequired(false);
