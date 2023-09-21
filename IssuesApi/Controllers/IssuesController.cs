@@ -2,10 +2,12 @@ using IssuesApi.Classes.Base;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssuesApi.Controllers;
 
+[Authorize]
 public class IssuesController : BaseController
 {
     private readonly IIssuesService _service;

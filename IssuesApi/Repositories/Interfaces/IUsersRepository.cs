@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using IssuesApi.Classes.Base.Interfaces;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
@@ -13,6 +14,7 @@ public interface IUsersRepository : IRepository<User>
     Task<Result<User>> Update(User entity);
     Task<Result<FilteredList<User>>> GetPage(UsersPageFilter filter);
     Task<Option<User>> Get(long id);
+    Task<List<User>> List(params Expression<Func<User, bool>>[] predicates);
     Task<bool> SoftDelete(long id);
     Task<bool> HardDelete(long id);
 }

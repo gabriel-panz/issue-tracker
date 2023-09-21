@@ -3,9 +3,10 @@ using IssuesApi.Domain.Inputs;
 using IssuesApi.Domain.Filter;
 using IssuesApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IssuesApi.Controllers;
-
+[Authorize]
 public class ProjectsController : BaseController
 {
     private readonly IProjectsService _service;

@@ -1,12 +1,14 @@
 using IssuesApi.Classes.Context;
-using IssuesApi.Repositories;
-using IssuesApi.Repositories.Interfaces;
-using IssuesApi.Services;
-using IssuesApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using IssuesApi.Domain.AutoMapperProfiles;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using IssuesApi.Utils;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using IssuesApi.Services;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,14 +21,6 @@ builder.Services.AddDbContext<IssuesDbContext>(options =>
 builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile));
 
 builder.Services.ConfigureDependencyInjection();
-// builder.Services.AddScoped<IIssueTagsRepository, IssueTagsRepository>();
-// builder.Services.AddScoped<IIssuesRepository, IssuesRepository>();
-// builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
-// builder.Services.AddScoped<ITagsRepository, TagsRepository>();
-
-// builder.Services.AddScoped<IIssuesService, IssuesService>();
-// builder.Services.AddScoped<IProjectsService, ProjectsService>();
-// builder.Services.AddScoped<ITagsService, TagsService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -36,8 +30,63 @@ builder.Services.AddControllers().AddJsonOptions(options =>
         .Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters.IssuerSigningKey =
+        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(AuthService.Secret));
+
+    options.TokenValidationParameters.ValidateIssuerSigningKey = false;
+
+    options.TokenValidationParameters.ValidateLifetime = true;
+
+    options.TokenValidationParameters.ValidateIssuer = false;
+
+    options.TokenValidationParameters.ValidateAudience = false;
+});
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new()
+    {
+        Title = "Issue Tracking Api",
+        Version = "v1",
+    });
+
+    OpenApiSecurityScheme securityScheme = new()
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter into field the word 'Bearer' following by space and JWT",
+        Name = "Authorization",
+        Scheme = "Bearer",
+        Type = SecuritySchemeType.ApiKey,
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+    c.AddSecurityRequirement(new()
+    {
+        [new()
+        {
+            In = ParameterLocation.Header,
+            Name = "Bearer",
+            BearerFormat = "Bearer",
+            Reference = new()
+            {
+                Id = "Bearer",
+                Type = ReferenceType.SecurityScheme,
+            },
+            Scheme = "oauth2",
+        }] = new List<string>(),
+    });
+
+    // var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    // var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    // c.IncludeXmlComments(xmlPath);
+}); ;
 
 var app = builder.Build();
 

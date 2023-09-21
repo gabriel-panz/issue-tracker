@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
@@ -107,5 +108,15 @@ public class UsersRepository : BaseRepository<User>, IUsersRepository
             .ToListAsync();
 
         return new FilteredList<User>(result, total);
+    }
+
+    public async Task<List<User>> List(params Expression<Func<User, bool>>[] predicates)
+    {
+        var query = _context.Set<User>().AsQueryable();
+        foreach (var item in predicates)
+        {
+            query = query.Where(item);
+        }
+        return await query.ToListAsync();
     }
 }

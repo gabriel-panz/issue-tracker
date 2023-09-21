@@ -2,10 +2,12 @@ using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssuesApi.Controllers;
 
+[Authorize]
 public class TagsController : BaseController
 {
     private readonly ITagsService _service;

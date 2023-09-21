@@ -19,8 +19,7 @@ public class UsersService : BaseService
     private readonly IUsersRepository _repository;
     public UsersService(
         IUsersRepository repository,
-        IMapper mapper
-        )
+        IMapper mapper)
             : base(mapper)
     {
         _repository = repository;
