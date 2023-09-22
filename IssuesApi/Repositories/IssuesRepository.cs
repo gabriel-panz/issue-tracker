@@ -1,6 +1,7 @@
 using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
+using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters;
@@ -24,6 +25,14 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
     public async Task<Result<IssueItem>> Create(IssueItem entity)
     {
+        var project = await _context
+            .Set<Project>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
+            .FirstOrDefaultAsync(x => x.Id == entity.ProjectId);
+
+        if (project is null) return new(ResourceNotFoundException
+                .Create(nameof(Project), $"Id == {entity.ProjectId}"));
+
         await _context.Set<IssueItem>().AddAsync(entity);
 
         try
@@ -41,6 +50,14 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
     {
         try
         {
+            var project = await _context
+                .Set<Project>()
+                .Where(x => x.CreatedByUserId == GetRequestUserId())
+                .FirstOrDefaultAsync(x => x.Id == entity.ProjectId);
+
+            if (project is null) return new(ResourceNotFoundException
+                    .Create(nameof(Project), $"Id == {entity.ProjectId}"));
+
             entity.UpdatedAt = DateTime.UtcNow;
 
             var tags = await _context.Set<IssueTag>()
@@ -77,6 +94,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         return await _context.Set<IssueItem>()
             .Include(x => x.IssueTags)
                 .ThenInclude(x => x.Tag)
+            .Where(x => x.Project!.CreatedByUserId == GetRequestUserId())
             .Where(x => x.Id == id)
             .Select(issue => new IssueItemOutputDTO
             {
@@ -94,6 +112,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
     public async Task<bool> HardDelete(long id)
     {
         var result = await _context.Set<IssueItem>()
+            .Where(x => x.Project!.CreatedByUserId == GetRequestUserId())
             .Where(x => x.Id == id)
             .ExecuteDeleteAsync();
 
@@ -103,6 +122,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
     public async Task<bool> SoftDelete(long id)
     {
         var result = await _context.Set<IssueItem>()
+            .Where(x => x.Project!.CreatedByUserId == GetRequestUserId())
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(x => x
                 .SetProperty(p => p.IsEnabled, false)
@@ -115,7 +135,8 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         IssuesPageFilter filter)
     {
         var query = _context.Set<IssueItem>()
-           .Where(x => x.ProjectId == filter.ProjectId);
+            .Where(x => x.Project!.CreatedByUserId == GetRequestUserId())
+            .Where(x => x.ProjectId == filter.ProjectId);
 
         if (filter.Status.Any())
             query = query.Where(x =>
