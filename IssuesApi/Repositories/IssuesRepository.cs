@@ -33,6 +33,21 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
         if (project is null) return new(ResourceNotFoundException
                 .Create(nameof(Project), $"Id == {entity.ProjectId}"));
 
+        var validatedAddTags = await _context.Set<Tag>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
+            .Where(x => entity.IssueTags.Select(x => x.TagId).Contains(x.Id))
+            .ToListAsync();
+
+        entity.IssueTags = new List<IssueTag>();
+        foreach (var item in validatedAddTags)
+        {
+            entity.IssueTags.Add(new()
+            {
+                IssueId = entity.Id,
+                TagId = item.Id
+            });
+        }
+
         await _context.Set<IssueItem>().AddAsync(entity);
 
         try
@@ -74,7 +89,20 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
             var removeTags = tags.Where(x => !newTagIds.Contains(x.TagId));
 
-            entity.IssueTags = addTags;
+            var validatedAddTags = await _context.Set<Tag>()
+                .Where(x => x.CreatedByUserId == GetRequestUserId())
+                .Where(x => addTags.Select(x => x.TagId).Contains(x.Id))
+                .ToListAsync();
+
+            entity.IssueTags = new List<IssueTag>();
+            foreach (var item in validatedAddTags)
+            {
+                entity.IssueTags.Add(new()
+                {
+                    IssueId = entity.Id,
+                    TagId = item.Id
+                });
+            }
 
             _context.Set<IssueTag>().RemoveRange(removeTags);
 
