@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoMapper;
 using IssuesApi.Classes.Base;
 using IssuesApi.Classes.Context;
+using IssuesApi.Classes.Exceptions;
 using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Repositories.Interfaces;
@@ -23,6 +24,8 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
 
     public async Task<Result<Tag>> Create(Tag entity)
     {
+        entity.CreatedByUserId = GetRequestUserId();
+
         await _context.Set<Tag>().AddAsync(entity);
 
         try
@@ -39,14 +42,15 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
     public async Task<Option<Tag>> Get(long id)
     {
         return await _context.Set<Tag>()
-            .Where(p => p.Id == id)
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
+            .Where(x => x.Id == id)
             .FirstOrDefaultAsync();
     }
 
     public async Task<Result<FilteredList<Tag>>> GetPage(PageFilter filter)
     {
         var query = _context.Set<Tag>()
-            .AsQueryable();
+            .Where(x => x.CreatedByUserId == GetRequestUserId());
 
         var total = await query.CountAsync();
 
@@ -61,6 +65,7 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
     public async Task<bool> HardDelete(long id)
     {
         var result = await _context.Set<Tag>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
             .Where(x => x.Id == id)
             .ExecuteDeleteAsync();
 
@@ -69,17 +74,21 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
 
     public async Task<List<Tag>> List(params Expression<Func<Tag, bool>>[] predicates)
     {
-        var query = _context.Set<Tag>().AsQueryable();
+        var query = _context.Set<Tag>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId());
+
         foreach (var predicate in predicates)
         {
             query.Where(predicate);
         }
+
         return await query.ToListAsync();
     }
 
     public async Task<bool> SoftDelete(long id)
     {
         var result = await _context.Set<Tag>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
             .Where(x => x.Id == id)
             .ExecuteUpdateAsync(x => x
                 .SetProperty(p => p.IsEnabled, false)
@@ -90,6 +99,14 @@ public class TagsRepository : BaseRepository<Tag>, ITagsRepository
 
     public async Task<Result<Tag>> Update(Tag entity)
     {
+        var tag = await _context.Set<Tag>()
+            .Where(x => x.CreatedByUserId == GetRequestUserId())
+            .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+        if (tag is null)
+            return new(ResourceNotFoundException
+                .Create(nameof(Tag), $"Id == {entity.Id}"));
+
         entity.UpdatedAt = DateTime.UtcNow;
 
         _context.Set<Tag>().Update(entity);

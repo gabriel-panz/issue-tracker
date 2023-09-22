@@ -10,4 +10,5 @@ public class User : BaseEntity
     public string? Nickname { get; set; }
 
     public List<Project> Projects { get; set; } = new();
+    public List<Tag> Tags { get; set; } = new();
 }
