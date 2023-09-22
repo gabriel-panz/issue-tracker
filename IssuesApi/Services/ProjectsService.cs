@@ -49,7 +49,7 @@ public class ProjectsService : BaseService, IProjectsService
 
         return result.Match<Result<ProjectOutputDTO>>(
             Some: s => s,
-            None: () => new(new ResourceNotFoundException())
+            None: () => new(ResourceNotFoundException.Create(nameof(Project), $"Id == {id}"))
         );
     }
 

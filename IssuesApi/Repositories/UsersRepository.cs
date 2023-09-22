@@ -16,8 +16,9 @@ public class UsersRepository : BaseRepository<User>, IUsersRepository
 {
     public UsersRepository(
         IssuesDbContext context,
-        IMapper mapper
-        ) : base(context, mapper)
+        IMapper mapper,
+        IHttpContextAccessor httpContextAccessor
+        ) : base(context, mapper, httpContextAccessor)
     {
     }
 

@@ -2,10 +2,12 @@ using IssuesApi.Classes.Base;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Domain.Inputs;
 using IssuesApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssuesApi.Controllers;
 
+[Authorize]
 public class UsersController : BaseController
 {
     private readonly IUsersService _service;
@@ -24,6 +26,7 @@ public class UsersController : BaseController
         );
     }
 
+    [AllowAnonymous]
     [HttpPost(Name = "[action][controller]")]
     public async Task<IActionResult> Create([FromBody] CreateUserDTO dto)
     {

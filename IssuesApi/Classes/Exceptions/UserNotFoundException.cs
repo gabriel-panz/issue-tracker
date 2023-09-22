@@ -20,6 +20,5 @@ public class UserNotFoundException : Exception
     {
         var message = $"User Login or Password is incorrect";
         return new UserNotFoundException(message);
-
     }
 }

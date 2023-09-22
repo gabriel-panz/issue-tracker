@@ -18,13 +18,15 @@ public class ProjectsRepository
 {
     public ProjectsRepository(
         IssuesDbContext context,
-        IMapper mapper
+        IMapper mapper,
+        IHttpContextAccessor httpContextAccessor
     )
-        : base(context, mapper)
+        : base(context, mapper, httpContextAccessor)
     { }
 
     public async Task<Result<Project>> Create(Project entity)
     {
+        entity.CreatedByUserId = GetRequestUserId();
         await _context.Set<Project>().AddAsync(entity);
 
         try
@@ -40,6 +42,18 @@ public class ProjectsRepository
 
     public async Task<Result<Project>> Update(Project entity)
     {
+        var userId = GetRequestUserId();
+        var existingEntity = await _context
+            .Set<Project>()
+            .Where(x => x.CreatedByUserId == userId)
+            .FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+        if (existingEntity is null)
+            return new(ResourceNotFoundException.Create(nameof(entity), $"Id == {entity.Id}"));
+
+        if (existingEntity.CreatedByUserId != userId)
+            return new(ResourceNotFoundException.Create(nameof(entity), $"Id == {entity.Id}"));
+
         entity.UpdatedAt = DateTime.UtcNow;
 
         _context.Set<Project>().Update(entity);
@@ -59,14 +73,18 @@ public class ProjectsRepository
     public async Task<Result<FilteredList<ProjectOutputDTO>>> GetPage(
         ProjectFilter filter)
     {
+        var userId = GetRequestUserId();
+
         var query = _context.Set<Project>()
-            .AsQueryable();
+            .AsQueryable()
+            .Where(x => x.CreatedByUserId == userId);
 
         if (filter.Description is not null)
         {
             query = query.Where(x
                 => x.Description != null
-                && x.Description.ToLower().Contains(filter.Description.ToLower()));
+                && x.Description.ToLower()
+                    .Contains(filter.Description.ToLower()));
         }
 
         if (filter.Title is not null)
@@ -96,10 +114,13 @@ public class ProjectsRepository
 
     public async Task<Option<ProjectOutputDTO>> Get(long id)
     {
+        var userId = GetRequestUserId();
+
         var result = await _context.Set<Project>()
             .Include(p => p.Issues)
                 .ThenInclude(p => p.IssueTags)
                     .ThenInclude(p => p.Tag)
+            .Where(p => p.CreatedByUserId == userId)
             .Where(p => p.Id == id)
             .Select(x => new ProjectOutputDTO()
             {
@@ -117,16 +138,22 @@ public class ProjectsRepository
 
     public async Task<Result<bool>> HardDelete(long id)
     {
+        var userId = GetRequestUserId();
+
         using var transaction = _context.Database.BeginTransaction();
 
         try
         {
             var project = await _context.Set<Project>()
-                .FindAsync(id);
+                .Where(x => x.CreatedByUserId == userId)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (project is null) return false;
+            if (project is null)
+                return new(ResourceNotFoundException.Create(
+                    nameof(Project), $"Id == {id}"));
 
             var issues = await _context.Set<Project>()
+                .Where(x => x.CreatedByUserId == userId)
                 .Where(x => x.Id == id)
                 .SelectMany(x => x.Issues)
                 .ToListAsync();
@@ -147,11 +174,14 @@ public class ProjectsRepository
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
+        var userId = GetRequestUserId();
+
         using var transaction = _context.Database.BeginTransaction();
 
         try
         {
             var affectedProjects = await _context.Set<Project>()
+                .Where(x => x.CreatedByUserId == userId)
                 .Where(x => x.Id == id)
                 .ExecuteUpdateAsync(x => x
                     .SetProperty(p => p.IsEnabled, false)

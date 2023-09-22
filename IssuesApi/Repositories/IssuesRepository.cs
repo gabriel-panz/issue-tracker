@@ -16,8 +16,9 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 {
     public IssuesRepository(
         IssuesDbContext context,
-        IMapper mapper
-        ) : base(context, mapper)
+        IMapper mapper,
+        IHttpContextAccessor httpContextAccessor
+        ) : base(context, mapper, httpContextAccessor)
     {
     }
 

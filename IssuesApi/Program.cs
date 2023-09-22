@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IssuesApi.Services;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +19,7 @@ builder.Services.AddDbContext<IssuesDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile));
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureDependencyInjection();
 
 builder.Services.AddControllers().AddJsonOptions(options =>

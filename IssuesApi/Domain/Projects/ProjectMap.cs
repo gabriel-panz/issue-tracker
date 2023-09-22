@@ -13,5 +13,12 @@ public class ProjectMap : BaseMapping<Project>
 
         builder.Property(x => x.Description)
             .IsRequired(false);
+
+        builder.Property(x => x.CreatedByUserId)
+            .IsRequired(true);
+
+        builder.HasOne(x => x.CreatedByUser)
+            .WithMany(x => x.Projects)
+            .HasForeignKey(x => x.CreatedByUserId);
     }
 }

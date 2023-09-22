@@ -16,8 +16,9 @@ public class IssueTagsRepository : BaseRepository<IssueTag>, IIssueTagsRepositor
 {
     public IssueTagsRepository(
         IssuesDbContext context,
-        IMapper mapper
-        ) : base(context, mapper)
+        IMapper mapper,
+        IHttpContextAccessor httpContextAccessor
+        ) : base(context, mapper, httpContextAccessor)
     {
     }
 
