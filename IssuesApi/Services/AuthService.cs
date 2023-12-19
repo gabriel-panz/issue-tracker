@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using IssuesApi.Classes;
 using IssuesApi.Classes.Exceptions;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Input;
@@ -47,14 +48,20 @@ public class AuthService : IAuthService
         return handler.WriteToken(token);
     }
 
-    public async Task<Result<string>> LogIn(LogInDTO dto)
+    public async Task<Result<AuthResponse>> LogIn(LogInDTO dto)
     {
         var users = await _userRepository.List(x => x.Login == dto.Login);
         if (!users.Any()) return new(UserNotFoundException.Create());
         var user = users.First();
 
         if (BC.BCrypt.Verify(dto.Password, user.Password))
-            return GenerateToken(user);
+        {
+            return new AuthResponse()
+            {
+                Token = GenerateToken(user),
+                UserId = user.Id
+            };
+        }
 
         return new(UserNotFoundException.Create());
     }

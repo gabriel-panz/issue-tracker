@@ -22,6 +22,16 @@ builder.Services.AddAutoMapper(typeof(IssueItemProfile), typeof(ProjectProfile))
 builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureDependencyInjection();
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddDefaultPolicy(p =>
+    {
+        p.AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowAnyOrigin();
+    });
+});
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions
@@ -94,6 +104,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseCors();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

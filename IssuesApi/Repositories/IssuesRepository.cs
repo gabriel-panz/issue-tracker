@@ -119,7 +119,7 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
 
     public async Task<Option<IssueItemOutputDTO>> Get(long id)
     {
-        return await _context.Set<IssueItem>()
+        var q = _context.Set<IssueItem>()
             .Include(x => x.IssueTags)
                 .ThenInclude(x => x.Tag)
             .Where(x => x.Project!.CreatedByUserId == GetRequestUserId())
@@ -134,7 +134,9 @@ public class IssuesRepository : BaseRepository<IssueItem>, IIssuesRepository
                 Tags = issue.IssueTags
                     .Select(tag => _mapper.Map<TagOutputDTO>(tag.Tag))
                     .ToList()
-            }).FirstOrDefaultAsync();
+            });
+
+        return await q.FirstOrDefaultAsync();
     }
 
     public async Task<bool> HardDelete(long id)
