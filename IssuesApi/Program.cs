@@ -8,6 +8,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using IssuesApi.Services;
 using Microsoft.OpenApi.Models;
+using IssuesApi.Classes.Hateoas;
+using IssuesApi.Domain.Input;
+using IssuesApi.Classes.Base.Interfaces;
+using IssuesApi.Domain.Inputs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +69,10 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Issue Tracking Api",
         Version = "v1",
+        Description = @"Simple issue tracking API I've built to
+explore ease of interfacing with a Web API. 
+
+To start you may register a user, using the v1/Users endpoint with the POST verb."
     });
 
     OpenApiSecurityScheme securityScheme = new()
@@ -98,9 +106,13 @@ builder.Services.AddSwaggerGen(c =>
     // c.IncludeXmlComments(xmlPath);
 }); ;
 
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.ListenAnyIP(5001);
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -110,5 +122,32 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+Delegate d = () =>
+{
+    var res = new
+    {
+        Actions = new List<ApiAction>()
+        {
+            new()
+            {
+                Href = "http://localhost:5001/v1/Auth",
+                Rel = "Login",
+                Method = HttpMethod.Post.ToString(),
+                Fields = DtoUtils.GetFields<LogInDTO>()
+            },
+            new()
+            {
+                Href = "http://localhost:5001/v1/Users",
+                Rel = "Register",
+                Method = HttpMethod.Post.ToString(),
+                Fields = DtoUtils.GetFields<CreateUserDTO>()
+            }
+        }
+    };
+
+    return res;
+};
+
+app.MapGet("", d);
 
 app.Run();
