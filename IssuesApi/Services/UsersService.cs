@@ -10,6 +10,7 @@ using IssuesApi.Repositories.Interfaces;
 using IssuesApi.Services.Interfaces;
 using BC = BCrypt.Net;
 using LanguageExt.Common;
+using IssuesApi.Utils;
 
 namespace IssuesApi.Services;
 
@@ -17,12 +18,16 @@ public class UsersService : BaseService
     , IUsersService
 {
     private readonly IUsersRepository _repository;
+    private readonly HttpContext _context;
     public UsersService(
         IUsersRepository repository,
-        IMapper mapper)
+        IMapper mapper,
+        IHttpContextAccessor contextAccessor
+        )
             : base(mapper)
     {
         _repository = repository;
+        _context = contextAccessor.HttpContext!;
     }
 
     private Result<UserOutputDTO> GetResult(User user)
@@ -72,6 +77,9 @@ public class UsersService : BaseService
 
     public async Task<Result<UserOutputDTO>> Get(long id)
     {
+        if (id != _context.GetLoggedUserId())
+            return new(new UnauthorizedAccessToResourceException());
+
         var result = await _repository.Get(id);
 
         return result.Match<Result<UserOutputDTO>>(
