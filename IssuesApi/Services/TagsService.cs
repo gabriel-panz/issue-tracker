@@ -49,7 +49,7 @@ public class TagsService
 
         return result.Match<Result<TagOutputDTO>>(
             Some: s => _mapper.Map<TagOutputDTO>(s),
-            None: () => new(new ResourceNotFoundException())
+            None: () => new(ResourceNotFoundException.Create("Tag", $"Id == {id}"))
         );
     }
 
@@ -74,6 +74,11 @@ public class TagsService
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        return await _repository.SoftDelete(id);
+        var res = await _repository.SoftDelete(id);
+
+        if (!res) return new(ResourceNotFoundException
+            .Create("Tag", $"Id == {id}"));
+
+        return true;
     }
 }
