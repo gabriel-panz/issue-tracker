@@ -24,12 +24,6 @@ public abstract class BaseRepository<T> : IRepository<T>
 
     protected long GetRequestUserId()
     {
-        var userId = _httpContext.User.Claims
-            .FirstOrDefault(x => x.Type == ClaimTypes.UserId.ToString())?
-            .Value;
-
-        return userId is null
-            ? throw new Exception("could not find userId in request context")
-            : long.Parse(userId);
+        return _httpContext.GetClaimsUserId();
     }
 }

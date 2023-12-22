@@ -106,11 +106,6 @@ To start you may register a user, using the v1/Users endpoint with the POST verb
     // c.IncludeXmlComments(xmlPath);
 }); ;
 
-builder.WebHost.ConfigureKestrel(o =>
-{
-    o.ListenAnyIP(5001);
-});
-
 var app = builder.Build();
 
 app.UseSwagger();

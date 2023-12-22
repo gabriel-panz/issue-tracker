@@ -77,7 +77,7 @@ public class UsersService : BaseService
 
     public async Task<Result<UserOutputDTO>> Get(long id)
     {
-        if (id != _context.GetLoggedUserId())
+        if (id != _context.GetClaimsUserId())
             return new(new UnauthorizedAccessToResourceException());
 
         var result = await _repository.Get(id);

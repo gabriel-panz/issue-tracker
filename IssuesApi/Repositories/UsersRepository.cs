@@ -6,8 +6,10 @@ using IssuesApi.Classes.Pagination;
 using IssuesApi.Domain.Entities;
 using IssuesApi.Domain.Filters;
 using IssuesApi.Repositories.Interfaces;
+using IssuesApi.Utils;
 using LanguageExt;
 using LanguageExt.Common;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace IssuesApi.Repositories;
@@ -31,9 +33,9 @@ public class UsersRepository : BaseRepository<User>, IUsersRepository
             await _context.SaveChangesAsync();
             return entity;
         }
-        catch (Exception e)
+        catch (DbUpdateException e)
         {
-            return new(e);
+            return new(e.ParseDbUpdateException());
         }
     }
 

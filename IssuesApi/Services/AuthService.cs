@@ -51,7 +51,8 @@ public class AuthService : IAuthService
     public async Task<Result<AuthResponse>> LogIn(LogInDTO dto)
     {
         var users = await _userRepository.List(x => x.Login == dto.Login);
-        if (!users.Any()) return new(UserNotFoundException.Create());
+        if (!users.Any()) return new(new UnauthorizedAccessToResourceException(
+            "User Login or Password is incorrect"));
         var user = users.First();
 
         if (BC.BCrypt.Verify(dto.Password, user.Password))
@@ -63,6 +64,7 @@ public class AuthService : IAuthService
             };
         }
 
-        return new(UserNotFoundException.Create());
+        return new(new UnauthorizedAccessToResourceException(
+            "User Login or Password is incorrect"));
     }
 }

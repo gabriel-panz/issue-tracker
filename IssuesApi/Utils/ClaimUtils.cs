@@ -2,10 +2,14 @@ namespace IssuesApi.Utils;
 
 public static class ClaimUtils
 {
-    public static long GetLoggedUserId(this HttpContext context)
+    public static long GetClaimsUserId(this HttpContext context)
     {
-        return long.Parse(context.User.Claims
-            .Where(x => x.Type == ClaimTypes.UserId.ToString())
-            .First().Value);
+        var userId = context.User.Claims
+            .FirstOrDefault(x => x.Type == ClaimTypes.UserId.ToString())?
+            .Value;
+
+        return userId is null
+            ? throw new Exception("could not find userId in request context")
+            : long.Parse(userId);
     }
 }

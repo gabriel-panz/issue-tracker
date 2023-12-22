@@ -1,3 +1,4 @@
+using IssuesApi.Classes.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace IssuesApi.Classes.Base;
@@ -26,13 +27,22 @@ public abstract class BaseController : ControllerBase
         return Ok(res);
     }
 
-    protected IActionResult BadResult(Exception data)
+    protected IActionResult BadResult<T>(T err)
+        where T : Exception
     {
-        return BadRequest(new ResponseViewModel<Exception>
+        var res = new ResponseViewModel<T>
         {
-            Message = data.Message,
+            Message = err.Message,
             Success = false,
             Data = null
-        });
+        };
+
+        return err switch
+        {
+            UnauthorizedAccessToResourceException => Unauthorized(res),
+            ResourceNotFoundException => NotFound(res),
+            ConflictException => Conflict(res),
+            _ => BadRequest(res)
+        };
     }
 }
