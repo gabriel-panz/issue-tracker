@@ -99,7 +99,7 @@ public class IssuesService : BaseService
 
         return result.Match<Result<IssueItemOutputDTO>>(
             Some: s => _mapper.Map<IssueItemOutputDTO>(s),
-            None: () => new(new ResourceNotFoundException())
+            None: () => new(ResourceNotFoundException.Create("Issue", $"Id == {id}"))
         );
     }
 
@@ -110,6 +110,11 @@ public class IssuesService : BaseService
 
     public async Task<Result<bool>> SoftDelete(long id)
     {
-        return await _repository.SoftDelete(id);
+        var res = await _repository.SoftDelete(id);
+
+        if (!res) return new(ResourceNotFoundException
+            .Create("Issue", $"Id == {id}"));
+
+        return true;
     }
 }
